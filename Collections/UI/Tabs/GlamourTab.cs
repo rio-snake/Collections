@@ -152,7 +152,7 @@ public class GlamourTab : IDrawable
 
         // (1) Equip Slot filter
         filteredCollection = CollectionWidget.PageSortOption.SortCollection(GetInitialCollection())
-            .Where(c => ((GlamourCollectible)c).ExcelRow.EquipSlot == EquipSlotsWidget.activeEquipSlot)
+            .Where(c => ((GlamourCollectible)c).ExcelRow.EquipSlot == (EquipSlotsWidget.activeEquipSlot == EquipSlot.FingerL ? EquipSlot.FingerR : EquipSlotsWidget.activeEquipSlot))
         // (2) Content type filters
         .Where(c => c.CollectibleKey is not null)
         .Where(c => !contentFilters.Any() || contentFilters.Intersect(c.CollectibleKey.SourceCategories).Any())
@@ -183,9 +183,14 @@ public class GlamourTab : IDrawable
     public void OnPublish(GlamourItemChangeEventArgs args)
     {
         var equipSlot = args.Collectible.ExcelRow.EquipSlot;
+        if (equipSlot == EquipSlot.FingerR && EquipSlotsWidget.activeEquipSlot == EquipSlot.FingerL)
+        {
+            Dev.Log("Left Hand Ring Published");
+            equipSlot = EquipSlotsWidget.activeEquipSlot;
+        }
         var stain0Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainPrimary.RowId;
         var stain1Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainSecondary.RowId;
-        Services.PreviewExecutor.PreviewWithTryOnRestrictions(args.Collectible, stain0Id, stain1Id, Services.Configuration.ForceTryOn);
+        Services.PreviewExecutor.PreviewWithTryOnRestrictions(args.Collectible, stain0Id, stain1Id, Services.Configuration.ForceTryOn, equipSlot);
     }
 
     public void OnPublish(GlamourSetChangeEventArgs args)

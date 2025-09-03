@@ -9,12 +9,17 @@ public class DataProvider
     public readonly List<EquipSlot> SupportedEquipSlots = new()
     {
         EquipSlot.MainHand,
-        EquipSlot.OffHand,
         EquipSlot.Head,
         EquipSlot.Body,
         EquipSlot.Gloves,
         EquipSlot.Legs,
         EquipSlot.Feet,
+        EquipSlot.OffHand,
+        EquipSlot.Ears,
+        EquipSlot.Neck,
+        EquipSlot.Wrists,
+        EquipSlot.FingerL,
+        EquipSlot.FingerR
     };
 
     public ConcurrentDictionary<Type, (string name, uint orderKey, List<ICollectible> collection)> collections = new();

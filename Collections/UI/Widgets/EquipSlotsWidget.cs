@@ -212,7 +212,7 @@ public class EquipSlotsWidget
     {
         // Update current glamour set
         var item = args.Collectible.ExcelRow;
-        currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId);
+        currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId, equipSlot: activeEquipSlot);
     }
 
     public void OnPublish(DyeChangeEventArgs args)

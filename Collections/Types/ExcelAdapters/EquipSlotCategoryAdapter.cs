@@ -33,6 +33,12 @@ public struct EquipSlotCategoryAdapter(ExcelPage page, uint offset, uint row) : 
             return EquipSlot.Legs;
         if (Feet != 0)
             return EquipSlot.Feet;
+        if (Ears != 0) return EquipSlot.Ears;
+        if (Neck != 0) return EquipSlot.Neck;
+        if (Wrists != 0) return EquipSlot.Wrists;
+        if (FingerR != 0) return EquipSlot.FingerR;
+        if (FingerL != 0) return EquipSlot.FingerL;
+        
         return EquipSlot.None;
     }
 
