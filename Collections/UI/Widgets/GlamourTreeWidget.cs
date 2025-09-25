@@ -187,19 +187,14 @@ public class GlamourTreeWidget
                         ImGui.EndPopup();
                     }
 
-                    // Glamour Set - drop source
-                    if (ImGui.BeginDragDropSource())
-                    {
-                        // // Not used really
-                        // unsafe
-                        // {
-                        //     var i = 0;
-                        //     int* tesnum = &i;
-                        //     ImGui.SetDragDropPayload($"payload{i}", new IntPtr(tesnum), sizeof(int));
-                        // }
+                    
 
+                    // Glamour Set - drop source
+                    if (ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceAllowNullId | ImGuiDragDropFlags.SourceNoDisableHover))
+                    {
                         // Capture drag source state
                         dropSource = (n, k);
+                        ImGui.SetDragDropPayload("DragDropData", []);
                         ImGui.EndDragDropSource();
                     }
 
@@ -299,15 +294,17 @@ public class GlamourTreeWidget
     // Move selected glamour set under this target index
     private void MoveGlamourSet(int targetDirectory, int targetGlamourSet)
     {
-        // Determine offset if moving in the same directory
+
+        // we add 1 to moves on list items to keep movement from different folders
+        // "natural" feeling, but moving within the same folder feels natural when
+        // this offset doesn't exist
         var targetOffset = 0;
-        if (targetDirectory == dropSource.directory)
+        if (targetDirectory == dropSource.directory && targetGlamourSet > 0)
         {
-            if (targetGlamourSet > dropSource.glamourSet)
-            {
-                targetOffset = -1;
-            }
+            targetOffset -= 1;
         }
+
+        Dev.Log($"Moving Set {dropSource.glamourSet} in directory {dropSource.directory} to Set {targetGlamourSet + targetOffset} in directory {targetDirectory}");
 
         // Update directory tree
         var sourceGlamourSet = glamourTree.Directories[dropSource.directory].GlamourSets[dropSource.glamourSet];
