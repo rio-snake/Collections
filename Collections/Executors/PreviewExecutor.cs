@@ -44,7 +44,7 @@ public unsafe class PreviewExecutor
         }
         else
         {
-            Preview(item.Value, (byte)stain0Id, (byte)stain1Id);
+            Preview(item.Value, (byte)stain0Id, (byte)stain1Id, true, equipSlot);
         }
     }
 

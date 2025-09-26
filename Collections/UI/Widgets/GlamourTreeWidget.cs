@@ -301,7 +301,7 @@ public class GlamourTreeWidget
         var targetOffset = 0;
         if (targetDirectory == dropSource.directory && targetGlamourSet > 0)
         {
-            targetOffset -= 1;
+            targetOffset = -1;
         }
 
         Dev.Log($"Moving Set {dropSource.glamourSet} in directory {dropSource.directory} to Set {targetGlamourSet + targetOffset} in directory {targetDirectory}");
@@ -325,7 +325,7 @@ public class GlamourTreeWidget
         // TODO add indication on which items exist in Dresser
         foreach (var (equipSlot, glamourItem) in currentGlamourSet.Items)
         {
-            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id);
+            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id, equipSlot);
         }
     }
 

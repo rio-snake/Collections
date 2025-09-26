@@ -66,8 +66,8 @@ public struct EquipSlotCategoryAdapter(ExcelPage page, uint offset, uint row) : 
     public readonly sbyte Ears => page.ReadInt8(offset + 8);
     public readonly sbyte Neck => page.ReadInt8(offset + 9);
     public readonly sbyte Wrists => page.ReadInt8(offset + 10);
-    public readonly sbyte FingerL => page.ReadInt8(offset + 11);
-    public readonly sbyte FingerR => page.ReadInt8(offset + 12);
+    public readonly sbyte FingerR => page.ReadInt8(offset + 11);
+    public readonly sbyte FingerL => page.ReadInt8(offset + 12);
     public readonly sbyte SoulCrystal => page.ReadInt8(offset + 13);
 
 }

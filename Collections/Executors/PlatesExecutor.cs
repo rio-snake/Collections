@@ -12,17 +12,17 @@ public unsafe class PlatesExecutor
         return plateAgent->AgentInterface.IsAgentActive();
     }
 
-    public static unsafe void SetPlateItem(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0)
+    public static unsafe void SetPlateItem(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, EquipSlot? equipSlot = null)
     {
         try
         {
             if (!IsInPlateWindow())
                 throw new ApplicationException("Attempt to edit Glamour Plate when plate agent is inactive");
 
-            SetPlateAgentToEquipSlot(item.EquipSlot);
+            SetPlateAgentToEquipSlot(equipSlot ?? item.EquipSlot);
 
             // Look up in Dresser
-            if (Services.ItemFinder.IsItemInDresser(item.RowId))
+            if (Services.ItemFinder.IsItemInDresser(item.RowId, checkOutfits: true))
             {
                 Dev.Log($"Found {item.Name} ({item.RowId}) in Dresser, Adding to plate with stain: {stain0Id}, {stain1Id}");
                 var index = Services.DresserObserver.DresserItemIds.IndexOf(item.RowId);

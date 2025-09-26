@@ -43,12 +43,12 @@ public class GlamourSet
         Items[equipSlot] = glamouritem;
     }
 
-    public void SetItem(ItemAdapter item, uint stain0Id, uint stain1Id)
+    public void SetItem(ItemAdapter item, uint stain0Id, uint stain1Id, EquipSlot? equipSlot = null)
     {
         if (!Services.DataProvider.SupportedEquipSlots.Contains(item.EquipSlot))
             throw new ArgumentOutOfRangeException($"Equip slot {item.EquipSlot} not supported for GlamourSet");
 
-        Items[item.EquipSlot] = new GlamourItem(item.RowId, stain0Id, stain1Id);
+        Items[equipSlot ?? item.EquipSlot] = new GlamourItem(item.RowId, stain0Id, stain1Id);
     }
 
     public void ClearEquipSlot(EquipSlot equipSlot)

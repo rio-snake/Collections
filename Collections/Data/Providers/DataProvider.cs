@@ -18,8 +18,8 @@ public class DataProvider
         EquipSlot.Ears,
         EquipSlot.Neck,
         EquipSlot.Wrists,
+        EquipSlot.FingerR,
         EquipSlot.FingerL,
-        EquipSlot.FingerR
     };
 
     public ConcurrentDictionary<Type, (string name, uint orderKey, List<ICollectible> collection)> collections = new();

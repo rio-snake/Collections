@@ -40,7 +40,6 @@ public class EquipSlotsWidget
 
     private void ApplyGlamourSetToPlate()
     {
-        Dev.Log("Applying glamour set to plate");
         // TODO indication which items exist in Dresser
         foreach (var (equipSlot, glamourItem) in currentGlamourSet.Items)
         {
