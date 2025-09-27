@@ -51,8 +51,11 @@ public class EquipSlotsWidget
         DrawButtons();
 
         var bgColor = *ImGui.GetStyleColorVec4(ImGuiCol.WindowBg);
-        foreach (var equipSlot in Services.DataProvider.SupportedEquipSlots)
+        for(int i = 0; i < Services.DataProvider.SupportedEquipSlots.Count; i++)
         {
+            EquipSlot equipSlot = Services.DataProvider.SupportedEquipSlots[i];
+            // i+1 here so that we only do this every odd item
+            if ((i + 1) % 2 == 0) ImGui.SameLine();
             // Draw blue rect border over active equip slot
             var origPos = ImGui.GetCursorPos();
             if (activeEquipSlot == equipSlot)

@@ -8,17 +8,18 @@ public class DataProvider
     public List<StainAdapter> SupportedStains { get; set; }
     public readonly List<EquipSlot> SupportedEquipSlots = new()
     {
+        // ordered this way to draw them in 2 columns more efficiently
         EquipSlot.MainHand,
-        EquipSlot.Head,
-        EquipSlot.Body,
-        EquipSlot.Gloves,
-        EquipSlot.Legs,
-        EquipSlot.Feet,
         EquipSlot.OffHand,
+        EquipSlot.Head,
         EquipSlot.Ears,
+        EquipSlot.Body,
         EquipSlot.Neck,
+        EquipSlot.Gloves,
         EquipSlot.Wrists,
+        EquipSlot.Legs,
         EquipSlot.FingerR,
+        EquipSlot.Feet,
         EquipSlot.FingerL,
     };
 

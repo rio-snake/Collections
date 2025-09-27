@@ -23,7 +23,7 @@ public unsafe class PreviewExecutor
         }
         else
         {
-            Preview(collectible.ExcelRow, (byte)stain0Id, (byte)stain1Id, slot: equipSlot);
+            Preview(collectible.ExcelRow, (byte)stain0Id, (byte)stain1Id, equipSlot: equipSlot);
         }
     }
 
@@ -53,20 +53,19 @@ public unsafe class PreviewExecutor
         AgentTryon.TryOn(0xFF, item, stain0, stain1, item, false);
     }
 
-    private void Preview(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, bool storePreviewHistory = true, EquipSlot? slot = null)
+    private void Preview(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, bool storePreviewHistory = true, EquipSlot? equipSlot = null)
     {
         Dev.Log($"Previewing {item.Name}");
-
         if (storePreviewHistory)
-            previewHistory.Add(item.EquipSlot);
-
-        if (item.EquipSlot == EquipSlot.MainHand || item.EquipSlot == EquipSlot.OffHand)
+            previewHistory.Add(equipSlot ?? item.EquipSlot);
+            
+        if (item.EquipSlot == EquipSlot.MainHand || item.EquipSlot == EquipSlot.OffHand || equipSlot == EquipSlot.MainHand || equipSlot == EquipSlot.OffHand)
         {
             PreviewWeapon(item, stain0Id, stain1Id);
         }
         else
         {
-            PreviewEquipment(item, stain0Id, stain1Id, slot);
+            PreviewEquipment(item, stain0Id, stain1Id, equipSlot);
         }
     }
 
