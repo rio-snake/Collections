@@ -41,8 +41,14 @@ public class AchievementSource : CollectibleSource
 
     public unsafe override void DisplayLocation()
     {
-        AgentAchievement.Instance()->Show();
-        AgentAchievement.Instance()->OpenById(Achievement.RowId);
+        try
+        {
+            AchievementOpener.OpenAchievementByAchievementId(Achievement.RowId);
+        }
+        catch (Exception e)
+        {
+            Dev.Log(e.ToString());
+        }
     }
 
     public static int iconId = 000006; //61501;

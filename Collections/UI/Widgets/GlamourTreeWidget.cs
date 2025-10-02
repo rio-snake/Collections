@@ -184,10 +184,12 @@ public class GlamourTreeWidget
                         {
                             DeleteGlamourSet(n, k);
                         }
+
+                        ImGui.Button($"Clone##{n}{k}");
+                        UiHelper.InputText($"Clone##{n}{k}", (name) => CloneGlamourSet(n, k, name));
+
                         ImGui.EndPopup();
                     }
-
-                    
 
                     // Glamour Set - drop source
                     if (ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceAllowNullId | ImGuiDragDropFlags.SourceNoDisableHover))
@@ -222,6 +224,18 @@ public class GlamourTreeWidget
     private void AddGlamourSet(string setName)
     {
         glamourTree.Directories.First().GlamourSets.Add(new GlamourSet(setName));
+    }
+
+    private void CloneGlamourSet(int directoryIndex, int glamourSetIndex, string name)
+    {
+        GlamourSet toClone = glamourTree.Directories[directoryIndex].GlamourSets[glamourSetIndex];
+        GlamourSet clonedSet = new GlamourSet(name);
+        // clone the underlying glamour items as well, otherwise they're just references
+        clonedSet.Items = toClone.Items.Select((item) => (item.Key, new GlamourItem(item.Value.ItemId, item.Value.Stain0Id, item.Value.Stain1Id))).ToDictionary();
+        glamourTree.Directories[directoryIndex].GlamourSets.Insert(glamourSetIndex + 1, clonedSet);
+
+        // intuitive behavior is to switch to cloned set
+        SetSelectedGlamourSet(directoryIndex, glamourSetIndex + 1, true);
     }
 
     private void AddDirectory(string directoryName)

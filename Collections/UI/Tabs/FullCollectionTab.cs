@@ -16,8 +16,16 @@ public class FullCollectionTab : IDrawable
     {
         EventService = new EventService();
         filteredCollection = LoadInitialCollection();
-        // 
-        CollectionWidget = new CollectionWidget(EventService, false, Services.DataProvider.GetCollection<MinionCollectible>().First().GetSortOptions());
+        try
+        {
+            CollectionWidget = new CollectionWidget(EventService, false, Services.DataProvider.GetCollection<MinionCollectible>().First().GetSortOptions());
+        }
+        // only happens if collection has no items
+        catch (ArgumentNullException)
+        {
+            Dev.Log($"Tried to find sort options for base collection that has no items, falling back to no sort options...");
+            CollectionWidget = new CollectionWidget(EventService, false);
+        }
         ContentFiltersWidget = new ContentFiltersWidget(EventService, 1, filteredCollection);
         EventService.Subscribe<FilterChangeEvent, FilterChangeEventArgs>(OnPublish);
         ApplyFilters();
@@ -104,11 +112,13 @@ public class FullCollectionTab : IDrawable
 
         Task.Run(() =>
         {
+            // while updating obtained state, also create map of patches
             foreach (var collectible in filteredCollection)
             {
                 collectible.UpdateObtainedState();
                 patches[collectible.PatchAdded] = collectible.GetDisplayPatch();
             }
+            // sort patches by most recent
             patches = patches.AsParallel().OrderByDescending((p) => p.Key).ToDictionary();
         });
     }
