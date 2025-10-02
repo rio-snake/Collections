@@ -24,7 +24,7 @@ class EquipSlotConverter
 {
     public static WeaponSlot EquipSlotToWeaponSlot(EquipSlot equipSlot)
     {
-        switch(equipSlot)
+        switch (equipSlot)
         {
             case EquipSlot.MainHand: return WeaponSlot.MainHand;
             case EquipSlot.OffHand: return WeaponSlot.OffHand;
@@ -58,5 +58,26 @@ class EquipSlotConverter
         }
         // accounts for belts being removed
         return (int)equipSlot + 1;
+    }
+
+    public static uint EquipSlotToIcon(EquipSlot equipSlot)
+    {
+
+        switch (equipSlot)
+        {
+            
+            case EquipSlot.OffHand: return 060110;
+            case EquipSlot.Head: return 060124;
+            case EquipSlot.Body: return 060126;
+            case EquipSlot.Gloves: return 060129;
+            case EquipSlot.Legs: return 060128;
+            case EquipSlot.Feet: return 060130;
+            case EquipSlot.Ears: return 060133;
+            case EquipSlot.Neck: return 060132;
+            case EquipSlot.Wrists: return 060134;
+            case EquipSlot.FingerR: return 060135;
+            case EquipSlot.FingerL: return 060135;
+            default: return 061762;
+        }
     }
 }
