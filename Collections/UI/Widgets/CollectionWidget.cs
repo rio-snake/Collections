@@ -308,7 +308,7 @@ public class CollectionWidget
 
     private int GetIconsPerRow()
     {
-        return (int)Math.Floor((UiHelper.GetLengthToRightOfWindow() + UiHelper.UnitWidth() * 3) / (iconSize + (UiHelper.UnitWidth() * 2)));
+        return (int)Math.Floor((UiHelper.GetLengthToRightOfWindow() - UiHelper.UnitWidth()) / (iconSize + (UiHelper.UnitWidth() * 2)));
     }
 
     public bool IsFiltered(ICollectible collectible)
