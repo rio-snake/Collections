@@ -12,6 +12,7 @@ public class Configuration : IPluginConfiguration
     public List<uint> ArmoireItemIds = new();
     public GlamourTree GlamourTree = new();
     public bool AutoOpenInstanceTab = true;
+    public bool OnlyOpenIfUncollected = false;
     public bool AutoHideObtainedFromInstanceTab = false;
     public List<string> ExcludedCollectionsFromInstanceTab = new();
     public bool ForceTryOn = false;

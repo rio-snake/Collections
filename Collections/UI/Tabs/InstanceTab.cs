@@ -5,6 +5,7 @@ public class InstanceTab : IDrawable
     private List<ICollectible> collections = new();
     private uint collectiblesLoadedInstanceId = 0;
     private bool hideObtainedCollectibles = false;
+    private bool onlyOpenIfUncollected = false;
     private List<string> excludedCollections = new();
 
     private EventService EventService { get; init; }
@@ -20,10 +21,17 @@ public class InstanceTab : IDrawable
     {
         Dev.Log("Received DutyStarted event");
         hideObtainedCollectibles = Services.Configuration.AutoHideObtainedFromInstanceTab;
+        onlyOpenIfUncollected = Services.Configuration.OnlyOpenIfUncollected;
         excludedCollections = Services.Configuration.ExcludedCollectionsFromInstanceTab;
         collectiblesLoadedInstanceId = 0; // Makes sure we always load at the start of an instance
         if (Services.Configuration.AutoOpenInstanceTab)
         {
+            // If this setting is true, don't open the instance tab if the user has already collected everything for the instance
+            if (onlyOpenIfUncollected)
+            {
+                LoadCollectibles();
+                if (collections.All(c => c.GetIsObtained())) return;
+            }
             Services.WindowsInitializer.MainWindow.OpenTab("Instance");
         }
 
