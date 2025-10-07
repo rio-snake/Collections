@@ -29,7 +29,7 @@ public class EventSource : CollectibleSource
         WikiOpener.OpenGamerEscape(eventName);
     }
 
-    public static int iconId = 61757;
+    public static int iconId = 61766;
     protected override int GetIconId()
     {
         return iconId;

@@ -4,7 +4,7 @@ public enum SourceCategory
 {
     Tomestones,
     Scrips,
-    HuntSeals,
+    TheHunt,
     Gil,
     CompanySeals,
     MGP,
@@ -19,5 +19,6 @@ public enum SourceCategory
     BeastTribes,
     TreasureHunts,
     Crafting,
+    RestorationZone,
     Voyages,
 }

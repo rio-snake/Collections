@@ -47,7 +47,7 @@ public class CollectionWidget
         ImGuiListClipper clipper = new ImGuiListClipper();
 
         // clipper based on the number of items per row, not items themselves
-        clipper.Begin((int)Math.Ceiling(collectionList.Count / (double)iconsPerRow));
+        clipper.Begin((int)Math.Ceiling(collectionList.Count / (double)iconsPerRow), iconSize);
         if (ImGui.BeginChild("scroll-area"))
         {
             // using full collection instead of clipped one, due to variable heights from the headers, and variable rows from ending early. We could in theory change

@@ -56,7 +56,7 @@ public class InstanceSource : CollectibleSource
         DutyFinderOpener.OpenRegularDuty(ContentFinderCondition.RowId);
     }
 
-    public static int defaultIconId = 060414;
+    public static int defaultIconId = 61801;
     protected override int GetIconId()
     {
         var contentType = ContentFinderCondition.ContentType.Value;

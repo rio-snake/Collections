@@ -24,7 +24,7 @@ public class SettingsTab : IDrawable
             Services.Configuration.Save();
         }
         // spacing to signify this is a sub-option for auto-open
-        ImGui.InvisibleButton("padding", new Vector2(15, 0));
+        ImGui.InvisibleButton("padding", new Vector2(15, 1));
         ImGui.SameLine();
         if (ImGui.Checkbox("Only open Instance tab if there are uncollected items ", ref onlyOpenIfUncollected))
         {

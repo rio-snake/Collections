@@ -28,7 +28,7 @@ public class QuestSource : CollectibleSource
     {
     }
 
-    public static int iconId = 61419;
+    public static int iconId = 61757;
     protected override int GetIconId()
     {
         return iconId;

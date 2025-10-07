@@ -55,7 +55,7 @@ public class UiHelper
 
         //var originalPosX = ImGui.GetCursorPosX();
         var origPos = ImGui.GetCursorPos();
-        ImGui.InvisibleButton("ignore", new Vector2(minWidth, 1));
+        ImGui.InvisibleButton("ignore", new Vector2(minWidth <= 0 ? 1 : minWidth, 1));
         ImGui.SetCursorPos(origPos);
 
         draw();

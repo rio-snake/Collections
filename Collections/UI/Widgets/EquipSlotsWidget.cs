@@ -132,7 +132,7 @@ public class EquipSlotsWidget
             }
 
             // Interaction with palette button (details / reset)
-            if (ImGui.IsItemHovered(ImGuiHoveredFlags.DockHierarchy))
+            if (ImGui.IsItemHovered())
             {
                 hoveredPaletteButton[equipSlot] = true;
 
