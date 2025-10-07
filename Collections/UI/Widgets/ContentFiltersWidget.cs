@@ -19,9 +19,10 @@ public class ContentFiltersWidget
         {SourceCategory.PvP, PvPSeriesSource.iconId}, // 61806
         {SourceCategory.Duty, InstanceSource.defaultIconId},
         {SourceCategory.Quest, QuestSource.iconId},
+        {SourceCategory.Fate, 61809},
         {SourceCategory.Event, EventSource.iconId},
         {SourceCategory.Tomestones, 65086},
-        {SourceCategory.DeepDungeon, 60847},
+        {SourceCategory.DeepDungeon, 61824},
         {SourceCategory.BeastTribes, 65016}, // 65042
         {SourceCategory.MogStation, MogStationSource.iconId},
         {SourceCategory.Achievement, AchievementSource.iconId},
@@ -30,7 +31,8 @@ public class ContentFiltersWidget
         {SourceCategory.TheHunt, 61819},
         {SourceCategory.TreasureHunts, 61808},
         {SourceCategory.Crafting, 61816},
-        {SourceCategory.RestorationZone, 60859},
+        {SourceCategory.RestorationZone, 61815},
+        {SourceCategory.ExplorationZone, 61837},
         {SourceCategory.Voyages, SubmarineSource.defaultIconId},
     };
 

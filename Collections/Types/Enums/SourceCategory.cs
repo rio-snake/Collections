@@ -5,6 +5,7 @@ public enum SourceCategory
     Tomestones,
     Scrips,
     TheHunt,
+    Fate,
     Gil,
     CompanySeals,
     MGP,
@@ -20,5 +21,6 @@ public enum SourceCategory
     TreasureHunts,
     Crafting,
     RestorationZone,
+    ExplorationZone,
     Voyages,
 }

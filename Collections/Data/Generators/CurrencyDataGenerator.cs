@@ -4,6 +4,8 @@ namespace Collections;
 
 public class CurrencyDataGenerator
 {
+    // manual information for item categories
+    // if there's an in-data identifier, use that instead.
     public Dictionary<uint, SourceCategory> ItemIdToSourceCategory = new()
     {
         { 00001, SourceCategory.Gil }, // Gil
@@ -11,6 +13,7 @@ public class CurrencyDataGenerator
         { 00025, SourceCategory.PvP }, // Wolf Mark
         { 21067, SourceCategory.PvP }, // Wolf Collar
         { 36656, SourceCategory.PvP }, // Trophy Crystals
+        { 30341, SourceCategory.Duty }, // Faux Leaves
         { 10310, SourceCategory.Scrips }, // Blue gatherers scrip
         { 10311, SourceCategory.Scrips }, // Red gatherers scrip
         { 17834, SourceCategory.Scrips }, // Yellow gatherers scrip
@@ -24,6 +27,7 @@ public class CurrencyDataGenerator
         { 00027, SourceCategory.TheHunt }, // Allied Seal
         { 10307, SourceCategory.TheHunt }, // Centurio Seal
         { 26533, SourceCategory.TheHunt }, // Sack of nuts
+        { 26807, SourceCategory.Fate}, // Bicolor gems
         { 00029, SourceCategory.MGP }, // MGP
         { 41629, SourceCategory.MGP}, // MGF (fall guys)
         { 37549, SourceCategory.IslandSanctuary }, // Seafarer's Cowrie
@@ -33,6 +37,8 @@ public class CurrencyDataGenerator
         { 47343, SourceCategory.RestorationZone}, // Phaenna token booklet
         { 47594, SourceCategory.RestorationZone}, // Phaenna exploration token 
         { 48146, SourceCategory.RestorationZone}, // Phaenna credit
+        // Occult Crescent
+        { 47868, SourceCategory.ExplorationZone}, // Sanguinite
     };
 
     public CurrencyDataGenerator()
@@ -60,9 +66,24 @@ public class CurrencyDataGenerator
         var ItemSheet = ExcelCache<ItemAdapter>.GetSheet();
         foreach (var item in ItemSheet)
         {
-            if (item.ItemSortCategory.RowId == 41) // Deep Dungeon Currency items
+            switch (item.ItemSortCategory.RowId)
             {
-                ItemIdToSourceCategory[item.RowId] = SourceCategory.DeepDungeon;
+                // Deep Dungeon Currency items
+                case 41:
+                    ItemIdToSourceCategory[item.RowId] = SourceCategory.DeepDungeon;
+                    break;
+                // Exploration Zones
+                case 44: // Eureka
+                case 48: // Bozja
+                case 86: // Occult Crescent
+                    ItemIdToSourceCategory[item.RowId] = SourceCategory.ExplorationZone;
+                    break;
+                // FATEs
+                case 55: 
+                    // filters out non-fate currencies
+                    if(item.Unknown4 == 24000)
+                        ItemIdToSourceCategory[item.RowId] = SourceCategory.Fate;
+                    break;
             }
         }
     }
