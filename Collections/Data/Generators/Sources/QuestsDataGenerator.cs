@@ -12,23 +12,23 @@ public class QuestsDataGenerator : BaseDataGenerator<Quest>
         foreach (var quest in questSheet)
         {
             var rewards = quest.Reward;
-            var items = new List<uint>();
+            var items = new List<ItemAdapter>();
 
             foreach (var reward in rewards)
             {
-                if (reward.GetType() == typeof(Item))
+                if (reward.RowId != 0)
                 {
-                    items.Add(reward.RowId);
+                    ItemAdapter? item = ExcelCache<ItemAdapter>.GetSheet().GetRow(reward.RowId);
+                    // we only care about counting items that unlock a collectible or are glam
+                    if(item != null && item.HasValue && item.Value.ItemAction.RowId != 0 || item.Value.ItemSortCategory.RowId == 5)
+                        items.Add(item.Value);
                 }
             }
-            items.AddRange(quest.OptionalItemReward.Select(entry => entry.RowId).ToList());
-            foreach (var itemId in items)
+            foreach (var item in items)
             {
-                if (itemId == 0)
-                    continue;
-                AddEntry(itemId, quest);
+                AddEntry(item.RowId, quest);
             }
-
+            // emotes can be rewarded by quests separate from the books
             var emoteId = quest.EmoteReward.RowId;
             if (emoteId != 0)
             {
