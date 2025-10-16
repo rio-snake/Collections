@@ -1,5 +1,3 @@
-using FFXIVClientStructs.FFXIV.Component.Excel;
-
 namespace Collections;
 
 public class OutfitsCollectible : Collectible<ItemAdapter>, ICreateable<OutfitsCollectible, ItemAdapter>
@@ -32,7 +30,14 @@ public class OutfitsCollectible : Collectible<ItemAdapter>, ICreateable<OutfitsC
 
     protected override string GetDescription()
     {
-        return ExcelRow.Description.ToString();
+        var items = Services.ItemFinder.ItemsInOutfit(ExcelRow.RowId);
+        return items.Select(i => i.Name).Aggregate((full, item) => full + "\n" + item).ToString();
+    }
+
+    protected override HintModule GetSecondaryHint()
+    {
+        if (this.CollectibleKey == null) return base.GetSecondaryHint();
+        return new HintModule($"{(this.CollectibleKey as OutfitKey).FirstItem.ClassJobCategory.Value.Name}, Lv. {(this.CollectibleKey as OutfitKey).FirstItem.LevelEquip}", null);
     }
 
     public override void UpdateObtainedState()
@@ -43,6 +48,12 @@ public class OutfitsCollectible : Collectible<ItemAdapter>, ICreateable<OutfitsC
     protected override int GetIconId()
     {
         return ExcelRow.Icon;
+    }
+
+    public int GetNumberOfDyeSlots()
+    {
+        if (this.CollectibleKey == null) return 0;
+        return (CollectibleKey as OutfitKey).FirstItem.DyeCount;
     }
 
     public override void Interact()

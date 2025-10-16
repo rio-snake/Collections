@@ -76,6 +76,8 @@ public class MainWindow : Window, IDisposable
     {
         if (T == typeof(GlamourCollectible))
             return new GlamourTab();
+        else if (T == typeof(OutfitsCollectible))
+            return new OutfitsTab();
         else
             return new CollectionTab(Services.DataProvider.GetCollection(T));
 

@@ -26,6 +26,7 @@ public class EquipSlotsWidget
         InitializePaletteWidgets();
         eventService.Subscribe<GlamourSetChangeEvent, GlamourSetChangeEventArgs>(OnPublish);
         eventService.Subscribe<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(OnPublish);
+        eventService.Subscribe<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(OnPublish);
         eventService.Subscribe<DyeChangeEvent, DyeChangeEventArgs>(OnPublish);
     }
 
@@ -46,6 +47,7 @@ public class EquipSlotsWidget
             PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id);
         }
     }
+    
     public unsafe void Draw()
     {
         DrawButtons();
@@ -207,6 +209,18 @@ public class EquipSlotsWidget
         {
             paletteWidgets[equipSlot].ActiveStainPrimary = glamourItem.GetStainPrimary();
             paletteWidgets[equipSlot].ActiveStainSecondary = glamourItem.GetStainSecondary();
+        }
+    }
+    public void OnPublish(OutfitItemChangeEventArgs args)
+    {
+        // reset items
+        currentGlamourSet.Items.Clear();
+        
+        // add items in outfit
+        List<ItemAdapter> items = Services.ItemFinder.ItemsInOutfit(args.Collectible.ExcelRow.RowId);
+        foreach (var item in items)
+        {
+            currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId);
         }
     }
 

@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Collections;
 
 public class CollectionWidget
@@ -293,8 +291,16 @@ public class CollectionWidget
             collectible.Interact();
             if (isGlam)
             {
-                Dev.Log("Publishing GlamourItemChangeEvent");
-                EventService.Publish<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(new GlamourItemChangeEventArgs((GlamourCollectible)collectible));
+                if (collectible.GetType() == typeof(GlamourCollectible))
+                {
+                    Dev.Log("Publishing GlamourItemChangeEvent");
+                    EventService.Publish<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(new GlamourItemChangeEventArgs((GlamourCollectible)collectible));
+                }
+                else if (collectible.GetType() == typeof(OutfitsCollectible))
+                {
+                    Dev.Log("Publishing OutfitsItemChangeEvent");
+                    EventService.Publish<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(new OutfitItemChangeEventArgs((OutfitsCollectible)collectible));
+                }
             }
         }
         

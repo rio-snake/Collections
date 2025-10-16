@@ -21,16 +21,26 @@ public class TooltipWidget
         {
             ImGui.Image(icon.GetWrapOrEmpty().Handle, iconSize);
             ImGui.SameLine();
-            // adds dye icons to the tooltips
-            if (collectible.GetType() == typeof(GlamourCollectible) && ((GlamourCollectible)collectible).GetNumberOfDyeSlots() >= 1)
+
+            // adds dye icons to the tooltips of collectibles that can be dyed
+            int dyeSlots = 0;
+            if (collectible.GetType() == typeof(GlamourCollectible))
+            {
+                dyeSlots = ((GlamourCollectible)collectible).GetNumberOfDyeSlots();
+            }
+            else if (collectible.GetType() == typeof(OutfitsCollectible))
+            {
+                dyeSlots = ((OutfitsCollectible)collectible).GetNumberOfDyeSlots();
+            }
+
+            if (dyeSlots > 0)
             {
                 var _ = true;
-                UiHelper.IconButtonWithOffset(0, FontAwesomeIcon.CircleNotch, 25, 5, ref _, .8f,ColorsPalette.BLACK, ColorsPalette.GREEN);
-                if(((GlamourCollectible)collectible).GetNumberOfDyeSlots() == 2)
+                UiHelper.IconButtonWithOffset(0, FontAwesomeIcon.CircleNotch, 25, 5, ref _, .8f, ColorsPalette.BLACK, ColorsPalette.GREEN);
+                if (dyeSlots == 2)
                 {
-                    
                     ImGui.SameLine();
-                    UiHelper.IconButtonWithOffset(1, FontAwesomeIcon.CircleNotch, 30, -15, ref _, .8f,ColorsPalette.BLACK, ColorsPalette.GREEN);
+                    UiHelper.IconButtonWithOffset(1, FontAwesomeIcon.CircleNotch, 30, -15, ref _, .8f, ColorsPalette.BLACK, ColorsPalette.GREEN);
                 }
                 ImGui.SameLine();
             }
@@ -61,7 +71,7 @@ public class TooltipWidget
 
             // Obtained
             var isObtained = collectible.GetIsObtained();
-            UiHelper.IconButtonStateful("obtained-button", FontAwesomeIcon.Check, ref isObtained, ColorsPalette.GREY2, ColorsPalette.WHITE);
+            UiHelper.IconButtonStateful("obtained-button", FontAwesomeIcon.Check, ref isObtained, ColorsPalette.GREY2, ColorsPalette.YELLOW);
             if (ImGui.IsItemHovered())
             {
                 ImGui.SetTooltip(isObtained ? "Obtained" : "Unobtained");
