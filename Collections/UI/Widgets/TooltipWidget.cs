@@ -122,6 +122,7 @@ public class TooltipWidget
             ImGui.PopStyleColor();
             ImGui.PopTextWrapPos();
         }
+        collectible.DrawAdditionalTooltip();
 
         if (collectibleKey == null)
         {
