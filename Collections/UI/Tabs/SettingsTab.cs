@@ -5,6 +5,7 @@ public class SettingsTab : IDrawable
     private List<string> collectionNames = new();
     public SettingsTab()
     {
+        showAdditionalTooltips = Services.Configuration.ShowAdditionalTooltips;
         autoOpenInstanceTab = Services.Configuration.AutoOpenInstanceTab;
         onlyOpenIfUncollected = Services.Configuration.OnlyOpenIfUncollected;
         autoHideObtainedFromInstanceTab = Services.Configuration.AutoHideObtainedFromInstanceTab;
@@ -15,9 +16,15 @@ public class SettingsTab : IDrawable
     private bool autoOpenInstanceTab;
     private bool onlyOpenIfUncollected;
     private bool autoHideObtainedFromInstanceTab;
+    private bool showAdditionalTooltips;
     private List<string> excludedCollectionsFromInstanceTab;
     public void Draw()
     {
+        if(ImGui.Checkbox("Show additional item information in tooltips", ref showAdditionalTooltips))
+        {
+            Services.Configuration.ShowAdditionalTooltips = showAdditionalTooltips;
+            Services.Configuration.Save();
+        }
         if (ImGui.Checkbox("Auto open Instance tab when entering an instance", ref autoOpenInstanceTab))
         {
             Services.Configuration.AutoOpenInstanceTab = autoOpenInstanceTab;
