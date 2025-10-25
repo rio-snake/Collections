@@ -52,8 +52,8 @@ public class GlassesCollectible: Collectible<Glasses>, ICreateable<GlassesCollec
 
     public override unsafe void Interact()
     {
-        if(isObtained)
-            ActionManager.Instance()->UseAction(ActionType.Unk_10, ExcelRow.RowId);
+        if (isObtained)
+            ActionManager.Instance()->UseAction(ActionType.Unk_12, ExcelRow.RowId);
     }
 
     public override void OpenGamerEscape()

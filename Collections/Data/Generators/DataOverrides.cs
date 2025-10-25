@@ -35,6 +35,11 @@ public class DataOverrides
             {14, "Reach max Attacker rank with your Chocobo Companion"}, // Dragoon Barding
             {15, "Reach max Defender rank with your Chocobo Companion"}, // White Mage Barding
         }},
+        {typeof(BannerCondition), new Dictionary<uint, string>() {
+            {154, "Obtained via using the FINAL FANTASY XIV Companion App"}, // Companion App
+            {155, "Obtained via logging in to the FINAL FANTASY XIV Companion App while subscribed to a premium service plan"},
+            {347, "Obtained with the Performance ability."}, // Sheet Music Portrait
+        }},
     };
 
     public static readonly Dictionary<Type, Dictionary<uint, (uint, int)>> collectibleIdToSeriesReward = new()
@@ -64,7 +69,7 @@ public class DataOverrides
         {typeof(CharaMakeCustomize), new Dictionary<uint, decimal>() {
             {228, (decimal)2.4}, // Eternal Bonding
         }},
-        // No emotes; too many
+        // no emotes; too many
     };
 
     public static readonly List<uint> IgnoreBardingId = new()
