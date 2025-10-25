@@ -9,4 +9,13 @@ public class AchievementOpener
         AgentAchievement.Instance()->Show();
         AgentAchievement.Instance()->OpenById(achievementId);
     }
+
+    // Helper to 
+    public static unsafe bool IsComplete(int achievementId)
+    {
+
+        var ach = FFXIVClientStructs.FFXIV.Client.Game.UI.Achievement.Instance();
+        if (!ach->IsLoaded()) ach->RequestAchievementProgress((uint)achievementId);
+        return ach->IsComplete(achievementId);
+    }
 }
