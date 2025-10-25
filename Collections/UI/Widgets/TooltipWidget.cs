@@ -122,7 +122,12 @@ public class TooltipWidget
             ImGui.PopStyleColor();
             ImGui.PopTextWrapPos();
         }
-        collectible.DrawAdditionalTooltip();
+
+        // Additional Tooltip widget data
+        if(Services.Configuration.ShowAdditionalTooltips)
+        {
+            collectible.DrawAdditionalTooltip();
+        }
 
         if (collectibleKey == null)
         {
@@ -253,8 +258,8 @@ public class TooltipWidget
             DrawHintModule(collectible.SecondaryHint);
 
         // helpful for development
-        // if(Services.PluginInterface.IsDev)
-        //     DrawHintModule(new HintModule($"Collection ID: {collectible.Id}     Item ID: {collectible.CollectibleKey?.Id}", null));
+        if(Services.PluginInterface.IsDev)
+            DrawHintModule(new HintModule($"Collection ID: {collectible.Id}     Item ID: {collectible.CollectibleKey?.Id}", null));
     }
 
     public void DrawHintModule(HintModule hintmodule)

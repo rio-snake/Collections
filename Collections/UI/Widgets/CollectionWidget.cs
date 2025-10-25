@@ -267,7 +267,7 @@ public class CollectionWidget
         }
 
         // Details on click
-        if (ImGui.BeginPopupContextItem($"click-glam-item##{collectible.Name}", ImGuiPopupFlags.MouseButtonRight))
+        if (ImGui.BeginPopupContextItem($"click-glam-item##{collectible.GetHashCode()}", ImGuiPopupFlags.MouseButtonRight))
         {
             CollectibleTooltipWidget.DrawItemTooltip(collectible);
             ImGui.EndPopup();
