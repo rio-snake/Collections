@@ -52,10 +52,22 @@ public class MountCollectible : Collectible<Mount>, ICreateable<MountCollectible
         return ExcelRow.Icon;
     }
 
+    private int GetImageId()
+    {
+        return 64000 + ExcelRow.Icon; 
+    }
+
     public override unsafe void Interact()
     {
         if (isObtained)
             ActionManager.Instance()->UseAction(ActionType.Mount, ExcelRow.RowId);
+    }
+
+    public override void DrawAdditionalTooltip()
+    {
+        ImGui.TextWrapped(ExcelCache<MountTransient>.GetSheet().GetRow(ExcelRow.RowId).Value.DescriptionEnhanced.ToString());
+        var pic = Services.TextureProvider.GetFromGameIcon(new GameIconLookup((uint)GetImageId()));
+        ImGui.Image(pic.GetWrapOrEmpty().Handle, pic.GetWrapOrEmpty().Size * 0.75f);
     }
 
     public override void OpenGamerEscape()
