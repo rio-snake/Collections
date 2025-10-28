@@ -32,7 +32,7 @@ public class ContentFiltersWidget
         {SourceCategory.TreasureHunts, 61808},
         {SourceCategory.Crafting, 61816},
         {SourceCategory.RestorationZone, 61815},
-        {SourceCategory.ExplorationZone, 61837},
+        {SourceCategory.FieldOperations, 61837},
         {SourceCategory.Voyages, SubmarineSource.defaultIconId},
     };
 
