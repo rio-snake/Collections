@@ -205,7 +205,7 @@ public class GlamourTab : IDrawable
         // Preview the selected set
         foreach (var (equipSlot, glamourItem) in args.GlamourSet.Items)
         {
-            Services.PreviewExecutor.PreviewWithTryOnRestrictions(glamourItem.GetCollectible(), glamourItem.Stain0Id, glamourItem.Stain1Id, false);
+            Services.PreviewExecutor.PreviewWithTryOnRestrictions(glamourItem.GetCollectible(), glamourItem.Stain0Id, glamourItem.Stain1Id, false, equipSlot);
         }
     }
 
@@ -220,7 +220,7 @@ public class GlamourTab : IDrawable
         foreach (var (equipSlot, glamourItem) in EquipSlotsWidget.currentGlamourSet.Items)
         {
             var collectible = CollectibleCache<GlamourCollectible, ItemAdapter>.Instance.GetObject(glamourItem.ItemId);
-            Services.PreviewExecutor.PreviewWithTryOnRestrictions(collectible, glamourItem.Stain0Id, glamourItem.Stain1Id, Services.Configuration.ForceTryOn);
+            Services.PreviewExecutor.PreviewWithTryOnRestrictions(collectible, glamourItem.Stain0Id, glamourItem.Stain1Id, Services.Configuration.ForceTryOn, equipSlot);
         }
     }
 

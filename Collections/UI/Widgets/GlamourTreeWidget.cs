@@ -308,7 +308,6 @@ public class GlamourTreeWidget
     // Move selected glamour set under this target index
     private void MoveGlamourSet(int targetDirectory, int targetGlamourSet)
     {
-
         // we add 1 to moves on list items to keep movement from different folders
         // "natural" feeling, but moving within the same folder feels natural when
         // this offset doesn't exist
@@ -325,12 +324,8 @@ public class GlamourTreeWidget
         glamourTree.Directories[dropSource.directory].GlamourSets.RemoveAt(dropSource.glamourSet);
         glamourTree.Directories[targetDirectory].GlamourSets.Insert(targetGlamourSet + targetOffset, sourceGlamourSet);
 
-        // Update selected glamour set if moved
-        var selectedMove = dropSource == selected;
-        if (selectedMove)
-        {
-            SetSelectedGlamourSet(targetDirectory, targetGlamourSet + targetOffset, true);
-        }
+        // Update selected glamour set
+        SetSelectedGlamourSet(targetDirectory, targetGlamourSet + targetOffset, true);
     }
 
     private void ApplyGlamourSetToPlate()
@@ -376,7 +371,8 @@ public class GlamourTreeWidget
                 if(item is null) return;
                 if (Services.DataProvider.SupportedEquipSlots.Contains(item.Value.EquipSlot))
                 {
-                    currentGlamourSet.SetItem(item.Value, stain0Id, stain1Id);
+                    // left hand finger needs to be manually accounted for
+                    currentGlamourSet.SetItem(item.Value, stain0Id, stain1Id, i == EquipSlotConverter.EquipSlotToInventorySlot(EquipSlot.FingerL) ? EquipSlot.FingerL : null);
                 }
             }
         }

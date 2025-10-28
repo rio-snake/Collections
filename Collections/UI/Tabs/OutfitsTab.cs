@@ -3,6 +3,8 @@ namespace Collections;
 
 public class OutfitsTab : IDrawable
 {
+    private int collectionSize;
+    private int obtainedCount;
     private List<ICollectible> filteredCollection { get; set; }
     private JobSelectorWidget JobSelectorWidget { get; init; }
     private ContentFiltersWidget ContentFiltersWidget { get; init; }
@@ -17,6 +19,7 @@ public class OutfitsTab : IDrawable
         EquipSlotsWidget = new EquipSlotsWidget(EventService);
         EquipSlotsWidget.currentGlamourSet = new GlamourSet("outfits preview");
         filteredCollection = GetInitialCollection();
+        collectionSize = filteredCollection.Count();
         CollectionWidget = new CollectionWidget(EventService, true, filteredCollection.Count > 0 ? filteredCollection.First().GetSortOptions() : null);
 
         ApplyFilters();
@@ -44,6 +47,7 @@ public class OutfitsTab : IDrawable
         // }
         // ImGui.SameLine();
 
+        ImGui.ProgressBar((float)obtainedCount / collectionSize, new(UiHelper.GetLengthToRightOfWindow() - UiHelper.UnitWidth() * 2, UiHelper.UnitHeight() * 1f), $"{obtainedCount}/{collectionSize}");
         // Equip slot buttons
         ImGui.BeginGroup();
         if (ImGui.BeginTable("equip-slots", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
@@ -130,6 +134,8 @@ public class OutfitsTab : IDrawable
             {
                 collectible.UpdateObtainedState();
             }
+
+            obtainedCount = filteredCollection.Count(e => e.GetIsObtained());
         });
     }
 
