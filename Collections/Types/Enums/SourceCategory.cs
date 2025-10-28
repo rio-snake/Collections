@@ -21,6 +21,6 @@ public enum SourceCategory
     TreasureHunts,
     Crafting,
     RestorationZone,
-    ExplorationZone,
+    FieldOperations,
     Voyages,
 }

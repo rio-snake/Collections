@@ -181,7 +181,6 @@ public class CollectionWidget
             ImGui.PushStyleColor(ImGuiCol.Button, Services.WindowsInitializer.MainWindow.originalButtonColor);
             if (ImGui.Button("Reset Preview"))
             {
-                // Personally, I think it shoud also remove equipped items.
                 Services.PreviewExecutor.ResetAllPreview();
             }
             ImGui.PopStyleColor();

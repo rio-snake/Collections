@@ -38,7 +38,7 @@ public class CurrencyDataGenerator
         { 47594, SourceCategory.RestorationZone}, // Phaenna exploration token 
         { 48146, SourceCategory.RestorationZone}, // Phaenna credit
         // Occult Crescent
-        { 47868, SourceCategory.ExplorationZone}, // Sanguinite
+        { 47868, SourceCategory.FieldOperations}, // Sanguinite
     };
 
     public CurrencyDataGenerator()
@@ -76,7 +76,7 @@ public class CurrencyDataGenerator
                 case 44: // Eureka
                 case 48: // Bozja
                 case 86: // Occult Crescent
-                    ItemIdToSourceCategory[item.RowId] = SourceCategory.ExplorationZone;
+                    ItemIdToSourceCategory[item.RowId] = SourceCategory.FieldOperations;
                     break;
                 // FATEs
                 case 55: 
