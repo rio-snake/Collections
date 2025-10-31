@@ -9,4 +9,10 @@ public class QuestExecutor
     {
         return QuestManager.IsQuestComplete(questId);
     }
+
+    // returns whether a quest is an event quest or not
+    public static bool IsEventQuest(Quest quest)
+    {
+        return quest.Id.ToString().StartsWith("Fes");
+    }
 }
