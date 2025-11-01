@@ -3,7 +3,6 @@ namespace Collections;
 [Sheet("Item")]
 public unsafe struct ItemAdapter(ExcelPage page, uint offset, uint row) : IExcelRow<ItemAdapter>
 {
-    public List<Job>? Jobs { get; set; }
     public EquipSlot EquipSlot { get; set; }
     public bool IsEquipment { get; set; }
 
@@ -17,7 +16,6 @@ public unsafe struct ItemAdapter(ExcelPage page, uint offset, uint row) : IExcel
     public void PopulateData()
     {
         InitializeEquipSlot();
-        InitializeJobs();
     }
 
     public void InitializeEquipSlot()
@@ -27,23 +25,6 @@ public unsafe struct ItemAdapter(ExcelPage page, uint offset, uint row) : IExcel
         {
             EquipSlot = equipSlotCategory.Value.EquipSlot;
             IsEquipment = EquipSlot != EquipSlot.None;
-        }
-    }
-
-    public void InitializeJobs()
-    {
-        if (IsEquipment)
-        {
-            var classJobCategory = ExcelCache<ClassJobCategoryAdapter>.GetSheet().GetRow(ClassJobCategory.RowId);
-            //Services.classJobCategorySheet[(int)ClassJobCategory.Value.RowId];
-            if (classJobCategory != null)
-            {
-                Jobs = classJobCategory.Value.Jobs;
-            }
-        }
-        else
-        {
-            Jobs = new List<Job>();
         }
     }
 

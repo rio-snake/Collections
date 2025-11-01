@@ -1,5 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.System.Input;
-
 namespace Collections;
 
 public class ContentFiltersWidget
@@ -144,7 +142,7 @@ public class ContentFiltersWidget
 
     private void LoadIcons()
     {
-        icons = contentTypesToIconId.AsParallel().ToDictionary(c => c.Key, c => IconHandler.getIcon(c.Value));
+        icons = contentTypesToIconId.AsParallel().ToDictionary(c => c.Key, c => IconHandler.GetIcon(c.Value));
     }
 
     private void InitializeDefaultFiltersState()
