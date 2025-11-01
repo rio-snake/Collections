@@ -23,7 +23,7 @@ public class JobSelectorWidget
             // This will probably have to be updated to be more complex
             // once they introduce a new melee class (Viper is at UI prio 39 atm)
             return (uint)entry.UIPriority / 10;
-            }).OrderBy(entry => entry.Key).ToDictionary(entry => entry.Key, entry => entry.ToList());
+            }).OrderBy(entry => entry.Key).ToDictionary(entry => entry.Key, entry => entry.OrderBy(job => job.UIPriority).ToList());
     }
 
     public void Draw()
