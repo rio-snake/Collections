@@ -1,3 +1,5 @@
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+
 namespace Collections;
 
 public class AchievementSource : CollectibleSource
@@ -34,11 +36,19 @@ public class AchievementSource : CollectibleSource
 
     public override bool GetIslocatable()
     {
-        return false;
+        return true;
     }
 
-    public override void DisplayLocation()
+    public unsafe override void DisplayLocation()
     {
+        try
+        {
+            AchievementOpener.OpenAchievementByAchievementId(Achievement.RowId);
+        }
+        catch (Exception e)
+        {
+            Dev.Log(e.ToString());
+        }
     }
 
     public static int iconId = 000006; //61501;

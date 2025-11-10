@@ -1,57 +1,53 @@
+
 namespace Collections;
 
-public class GlamourTab : IDrawable
+public class OutfitsTab : IDrawable
 {
+    private int collectionSize;
+    private int obtainedCount;
     private List<ICollectible> filteredCollection { get; set; }
-    private GlamourTreeWidget GlamourTreeWidget { get; init; }
     private JobSelectorWidget JobSelectorWidget { get; init; }
     private ContentFiltersWidget ContentFiltersWidget { get; init; }
     private EquipSlotsWidget EquipSlotsWidget { get; init; }
     private CollectionWidget CollectionWidget { get; init; }
     private EventService EventService { get; init; }
-    public GlamourTab()
+    public OutfitsTab()
     {
         EventService = new EventService();
-        GlamourTreeWidget = new GlamourTreeWidget(EventService);
         JobSelectorWidget = new JobSelectorWidget(EventService);
         ContentFiltersWidget = new ContentFiltersWidget(EventService, 2);
         EquipSlotsWidget = new EquipSlotsWidget(EventService);
+        EquipSlotsWidget.currentGlamourSet = new GlamourSet("outfits preview");
         filteredCollection = GetInitialCollection();
+        collectionSize = filteredCollection.Count();
         CollectionWidget = new CollectionWidget(EventService, true, filteredCollection.Count > 0 ? filteredCollection.First().GetSortOptions() : null);
 
         ApplyFilters();
 
         EventService.Subscribe<FilterChangeEvent, FilterChangeEventArgs>(OnPublish);
-        EventService.Subscribe<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(OnPublish);
-        EventService.Subscribe<GlamourSetChangeEvent, GlamourSetChangeEventArgs>(OnPublish);
+        EventService.Subscribe<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(OnPublish);
         EventService.Subscribe<ReapplyPreviewEvent, ReapplyPreviewEventArgs>(OnPublish); 
-
-        // GlamourTreeWidget will always have at least one Directory + Set.
-        // Therefore once everything is initialized, set selection to first set (0, 0)
-        GlamourTreeWidget.SetSelectedGlamourSet(0, 0, false);
     }
 
-    private const int GlamourSetsWidgetWidth = 17;
     private const int SpaceBetweenFilterWidgets = 3;
 
     public void Draw()
     {
         Dev.Start();
 
-        if (ImGui.BeginTable("glam-tree", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
-        {
-            ImGui.TableSetupColumn("Glamour Sets", ImGuiTableColumnFlags.None, UiHelper.UnitWidth() * GlamourSetsWidgetWidth);
-            ImGui.TableHeadersRow();
+        // if (ImGui.BeginTable("glam-tree", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
+        // {
+        //     ImGui.TableSetupColumn("Glamour Sets", ImGuiTableColumnFlags.None, UiHelper.UnitWidth() * GlamourSetsWidgetWidth);
+        //     ImGui.TableHeadersRow();
 
-            ImGui.TableNextRow(ImGuiTableRowFlags.None, UiHelper.GetLengthToBottomOfWindow());
-            ImGui.TableNextColumn();
+        //     ImGui.TableNextRow(ImGuiTableRowFlags.None, UiHelper.GetLengthToBottomOfWindow());
+        //     ImGui.TableNextColumn();
 
-            GlamourTreeWidget.Draw();
+        //     ImGui.EndTable();
+        // }
+        // ImGui.SameLine();
 
-            ImGui.EndTable();
-        }
-        ImGui.SameLine();
-
+        ImGui.ProgressBar((float)obtainedCount / collectionSize, new(UiHelper.GetLengthToRightOfWindow() - UiHelper.UnitWidth() * 2, UiHelper.UnitHeight() * 1f), $"{obtainedCount}/{collectionSize}");
         // Equip slot buttons
         ImGui.BeginGroup();
         if (ImGui.BeginTable("equip-slots", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
@@ -134,14 +130,16 @@ public class GlamourTab : IDrawable
 
         Task.Run(() =>
         {
-            foreach (var collectible in Services.DataProvider.GetCollection<GlamourCollectible>())
+            foreach (var collectible in Services.DataProvider.GetCollection<OutfitsCollectible>())
             {
                 collectible.UpdateObtainedState();
             }
+
+            obtainedCount = filteredCollection.Count(e => e.GetIsObtained());
         });
     }
 
-    List<ICollectible> GetInitialCollection() => Services.DataProvider.GetCollection<GlamourCollectible>();
+    List<ICollectible> GetInitialCollection() => Services.DataProvider.GetCollection<OutfitsCollectible>();
 
     private void ApplyFilters()
     {
@@ -151,7 +149,6 @@ public class GlamourTab : IDrawable
 
         // (1) Equip Slot filter
         filteredCollection = CollectionWidget.PageSortOption.SortCollection(GetInitialCollection())
-            .Where(c => ((GlamourCollectible)c).ExcelRow.EquipSlot == (EquipSlotsWidget.activeEquipSlot == EquipSlot.FingerL ? EquipSlot.FingerR : EquipSlotsWidget.activeEquipSlot))
         // (2) Content type filters
         .Where(c => c.CollectibleKey is not null)
         .Where(c => !contentFilters.Any() || contentFilters.Intersect(c.CollectibleKey.SourceCategories).Any())
@@ -161,7 +158,7 @@ public class GlamourTab : IDrawable
                 // show all items if all filters disabled
                 if (!jobFilters.Any() && !JobSelectorWidget.AllClasses())
                     return true;
-                var itemJobCat = ((GlamourCollectible)c).ExcelRow.ClassJobCategory.Value;
+                var itemJobCat = ((OutfitKey)c.CollectibleKey).FirstItem.ClassJobCategory.Value;
                 // only show "All Classes" items if toggled
                 if (itemJobCat.RowId < 2 ) return JobSelectorWidget.AllClasses();
                 var itemJobs = itemJobCat.GetJobs();
@@ -179,32 +176,28 @@ public class GlamourTab : IDrawable
         .ToList();
     }
 
-    public void OnPublish(GlamourItemChangeEventArgs args)
+    public void OnPublish(OutfitItemChangeEventArgs args)
     {
-        var equipSlot = args.Collectible.ExcelRow.EquipSlot;
-        if (equipSlot == EquipSlot.FingerR && EquipSlotsWidget.activeEquipSlot == EquipSlot.FingerL)
+        // revert to original player armor if this is going to the preview window
+        if (Services.Configuration.ForceTryOn || args.Collectible.CollectibleKey.SourceCategories.Contains(SourceCategory.MogStation))
         {
-            Dev.Log("Left Hand Ring Published");
-            equipSlot = EquipSlotsWidget.activeEquipSlot;
+            Services.PreviewExecutor.ResetAllPreview();
         }
-        var stain0Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainPrimary.RowId;
-        var stain1Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainSecondary.RowId;
-        Services.PreviewExecutor.PreviewWithTryOnRestrictions(args.Collectible, stain0Id, stain1Id, Services.Configuration.ForceTryOn, equipSlot);
-    }
-
-    public void OnPublish(GlamourSetChangeEventArgs args)
-    {
-        // On some events (during initializing) we're suppressing preview
-        if (!args.Preview)
-            return;
-
-        // Reset glamour state. TODO reset Try On
-        Services.PreviewExecutor.ResetAllPreview();
+        else
+        {
+            // Fully unequip models to preview outfit's items without other interference
+            foreach (var equipSlot in Services.DataProvider.SupportedEquipSlots)
+            {
+                Services.PreviewExecutor.ResetSlotPreview(equipSlot);
+            }
+        }
 
         // Preview the selected set
-        foreach (var (equipSlot, glamourItem) in args.GlamourSet.Items)
+        foreach (var (equipSlot, glamourItem) in EquipSlotsWidget.currentGlamourSet.Items)
         {
-            Services.PreviewExecutor.PreviewWithTryOnRestrictions(glamourItem.GetCollectible(), glamourItem.Stain0Id, glamourItem.Stain1Id, false, equipSlot);
+            var stain0Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainPrimary.RowId;
+            var stain1Id = EquipSlotsWidget.paletteWidgets[equipSlot].ActiveStainSecondary.RowId;
+            Services.PreviewExecutor.PreviewWithTryOnRestrictions(glamourItem.GetCollectible(), stain0Id, stain1Id, Services.Configuration.ForceTryOn);
         }
     }
 
@@ -219,7 +212,7 @@ public class GlamourTab : IDrawable
         foreach (var (equipSlot, glamourItem) in EquipSlotsWidget.currentGlamourSet.Items)
         {
             var collectible = CollectibleCache<GlamourCollectible, ItemAdapter>.Instance.GetObject(glamourItem.ItemId);
-            Services.PreviewExecutor.PreviewWithTryOnRestrictions(collectible, glamourItem.Stain0Id, glamourItem.Stain1Id, Services.Configuration.ForceTryOn, equipSlot);
+            Services.PreviewExecutor.PreviewWithTryOnRestrictions(collectible, glamourItem.Stain0Id, glamourItem.Stain1Id, Services.Configuration.ForceTryOn);
         }
     }
 
@@ -229,7 +222,6 @@ public class GlamourTab : IDrawable
 
     public void OnClose()
     {
-        GlamourTreeWidget.SaveGlamourTreeToConfiguration();
     }
 }
 

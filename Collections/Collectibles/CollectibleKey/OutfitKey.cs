@@ -3,10 +3,18 @@ namespace Collections;
 public class OutfitKey : ItemKey, ICreateable<OutfitKey, (ItemAdapter, int)>
 {
     private IconHandler iconHandler { get; init; }
+    // stores first item in an outfit
+    public ItemAdapter FirstItem { get; init; }
 
     public OutfitKey((ItemAdapter, int) input) : base(input)
     {
         iconHandler = new IconHandler(input.Item1.Icon);
+        List<ItemAdapter> relatedItems = Services.ItemFinder.ItemsInOutfit(input.Item1.RowId);
+        // this should always be true, but safeguard here just in case
+        if (relatedItems.Count > 0)
+        {
+            FirstItem = relatedItems.First();
+        }
     }
 
     public static new OutfitKey Create((ItemAdapter, int) input)

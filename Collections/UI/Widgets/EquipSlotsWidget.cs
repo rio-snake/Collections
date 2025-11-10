@@ -26,6 +26,7 @@ public class EquipSlotsWidget
         InitializePaletteWidgets();
         eventService.Subscribe<GlamourSetChangeEvent, GlamourSetChangeEventArgs>(OnPublish);
         eventService.Subscribe<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(OnPublish);
+        eventService.Subscribe<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(OnPublish);
         eventService.Subscribe<DyeChangeEvent, DyeChangeEventArgs>(OnPublish);
     }
 
@@ -40,20 +41,23 @@ public class EquipSlotsWidget
 
     private void ApplyGlamourSetToPlate()
     {
-        Dev.Log("Applying glamour set to plate");
         // TODO indication which items exist in Dresser
         foreach (var (equipSlot, glamourItem) in currentGlamourSet.Items)
         {
-            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id);
+            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id, equipSlot);
         }
     }
+    
     public unsafe void Draw()
     {
         DrawButtons();
 
         var bgColor = *ImGui.GetStyleColorVec4(ImGuiCol.WindowBg);
-        foreach (var equipSlot in Services.DataProvider.SupportedEquipSlots)
+        for(int i = 0; i < Services.DataProvider.SupportedEquipSlots.Count; i++)
         {
+            EquipSlot equipSlot = Services.DataProvider.SupportedEquipSlots[i];
+            // i+1 here so that we only do this every odd item
+            if ((i + 1) % 2 == 0) ImGui.SameLine();
             // Draw blue rect border over active equip slot
             var origPos = ImGui.GetCursorPos();
             if (activeEquipSlot == equipSlot)
@@ -130,7 +134,7 @@ public class EquipSlotsWidget
             }
 
             // Interaction with palette button (details / reset)
-            if (ImGui.IsItemHovered(ImGuiHoveredFlags.DockHierarchy))
+            if (ImGui.IsItemHovered())
             {
                 hoveredPaletteButton[equipSlot] = true;
 
@@ -207,12 +211,24 @@ public class EquipSlotsWidget
             paletteWidgets[equipSlot].ActiveStainSecondary = glamourItem.GetStainSecondary();
         }
     }
+    public void OnPublish(OutfitItemChangeEventArgs args)
+    {
+        // reset items
+        currentGlamourSet.Items.Clear();
+        
+        // add items in outfit
+        List<ItemAdapter> items = Services.ItemFinder.ItemsInOutfit(args.Collectible.ExcelRow.RowId);
+        foreach (var item in items)
+        {
+            currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId);
+        }
+    }
 
     public void OnPublish(GlamourItemChangeEventArgs args)
     {
         // Update current glamour set
         var item = args.Collectible.ExcelRow;
-        currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId);
+        currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId, equipSlot: activeEquipSlot);
     }
 
     public void OnPublish(DyeChangeEventArgs args)

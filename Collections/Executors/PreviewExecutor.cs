@@ -14,7 +14,7 @@ public unsafe class PreviewExecutor
         return GameMain.IsInGPose();
     }
 
-    public void PreviewWithTryOnRestrictions(GlamourCollectible collectible, uint stain0Id, uint stain1Id, bool tryOn)
+    public void PreviewWithTryOnRestrictions(GlamourCollectible collectible, uint stain0Id, uint stain1Id, bool tryOn, EquipSlot? equipSlot = null)
     {
         var tryOnOverride = tryOn || collectible.CollectibleKey.SourceCategories.Contains(SourceCategory.MogStation);
         if (tryOnOverride)
@@ -23,7 +23,7 @@ public unsafe class PreviewExecutor
         }
         else
         {
-            Preview(collectible.ExcelRow, (byte)stain0Id, (byte)stain1Id);
+            Preview(collectible.ExcelRow, (byte)stain0Id, (byte)stain1Id, equipSlot: equipSlot);
         }
     }
 
@@ -44,7 +44,7 @@ public unsafe class PreviewExecutor
         }
         else
         {
-            Preview(item.Value, (byte)stain0Id, (byte)stain1Id);
+            Preview(item.Value, (byte)stain0Id, (byte)stain1Id, true, equipSlot);
         }
     }
 
@@ -53,20 +53,19 @@ public unsafe class PreviewExecutor
         AgentTryon.TryOn(0xFF, item, stain0, stain1, item, false);
     }
 
-    private void Preview(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, bool storePreviewHistory = true)
+    private void Preview(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, bool storePreviewHistory = true, EquipSlot? equipSlot = null)
     {
         Dev.Log($"Previewing {item.Name}");
-
         if (storePreviewHistory)
-            previewHistory.Add(item.EquipSlot);
-
-        if (item.EquipSlot == EquipSlot.MainHand || item.EquipSlot == EquipSlot.OffHand)
+            previewHistory.Add(equipSlot ?? item.EquipSlot);
+            
+        if (item.EquipSlot == EquipSlot.MainHand || item.EquipSlot == EquipSlot.OffHand || equipSlot == EquipSlot.MainHand || equipSlot == EquipSlot.OffHand)
         {
             PreviewWeapon(item, stain0Id, stain1Id);
         }
         else
         {
-            PreviewEquipment(item, stain0Id, stain1Id);
+            PreviewEquipment(item, stain0Id, stain1Id, equipSlot);
         }
     }
 
@@ -126,10 +125,10 @@ public unsafe class PreviewExecutor
         previewHistory.Add(equipSlot);
     }
 
-    private unsafe void PreviewEquipment(ItemAdapter item, byte stain0Id, byte? stain1Id)
+    private unsafe void PreviewEquipment(ItemAdapter item, byte stain0Id, byte? stain1Id, EquipSlot? slot = null)
     {
         var equipmentModelId = GetEquipmentModelId(item, stain0Id, stain1Id);
-        PreviewEquipment(item.EquipSlot, equipmentModelId);
+        PreviewEquipment(slot ?? item.EquipSlot, equipmentModelId);
     }
 
     private unsafe void PreviewEquipment(EquipSlot equipSlot, EquipmentModelId equipmentModelId)

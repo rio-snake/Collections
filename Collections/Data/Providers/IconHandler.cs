@@ -21,16 +21,16 @@ public class IconHandler
         if (!iconScheduled)
         {
             iconScheduled = true;
-            Task.Run(() => iconInternal = getIcon(iconId, false));
+            Task.Run(() => iconInternal = GetIcon(iconId, false));
         }
 
         return null;
     }
     public ISharedImmediateTexture GetIcon()
     {
-        return getIcon(iconId, false);
+        return GetIcon(iconId, false);
     }
-    public static ISharedImmediateTexture getIcon(int iconId, bool hq = false)
+    public static ISharedImmediateTexture GetIcon(int iconId, bool hq = false)
     {
         var lookup = new GameIconLookup(iconId: (uint)iconId, itemHq: hq);
         return Services.TextureProvider.GetFromGameIcon(lookup);

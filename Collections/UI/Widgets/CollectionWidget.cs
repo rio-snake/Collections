@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Collections;
 
 public class CollectionWidget
@@ -47,7 +45,7 @@ public class CollectionWidget
         ImGuiListClipper clipper = new ImGuiListClipper();
 
         // clipper based on the number of items per row, not items themselves
-        clipper.Begin((int)Math.Ceiling(collectionList.Count / (double)iconsPerRow));
+        clipper.Begin((int)Math.Ceiling(collectionList.Count / (double)iconsPerRow), iconSize);
         if (ImGui.BeginChild("scroll-area"))
         {
             // using full collection instead of clipped one, due to variable heights from the headers, and variable rows from ending early. We could in theory change
@@ -183,7 +181,6 @@ public class CollectionWidget
             ImGui.PushStyleColor(ImGuiCol.Button, Services.WindowsInitializer.MainWindow.originalButtonColor);
             if (ImGui.Button("Reset Preview"))
             {
-                // Personally, I think it shoud also remove equipped items.
                 Services.PreviewExecutor.ResetAllPreview();
             }
             ImGui.PopStyleColor();
@@ -269,7 +266,7 @@ public class CollectionWidget
         }
 
         // Details on click
-        if (ImGui.BeginPopupContextItem($"click-glam-item##{collectible.Name}", ImGuiPopupFlags.MouseButtonRight))
+        if (ImGui.BeginPopupContextItem($"click-glam-item##{collectible.GetHashCode()}", ImGuiPopupFlags.MouseButtonRight))
         {
             CollectibleTooltipWidget.DrawItemTooltip(collectible);
             ImGui.EndPopup();
@@ -293,8 +290,16 @@ public class CollectionWidget
             collectible.Interact();
             if (isGlam)
             {
-                Dev.Log("Publishing GlamourItemChangeEvent");
-                EventService.Publish<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(new GlamourItemChangeEventArgs((GlamourCollectible)collectible));
+                if (collectible.GetType() == typeof(GlamourCollectible))
+                {
+                    Dev.Log("Publishing GlamourItemChangeEvent");
+                    EventService.Publish<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(new GlamourItemChangeEventArgs((GlamourCollectible)collectible));
+                }
+                else if (collectible.GetType() == typeof(OutfitsCollectible))
+                {
+                    Dev.Log("Publishing OutfitsItemChangeEvent");
+                    EventService.Publish<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(new OutfitItemChangeEventArgs((OutfitsCollectible)collectible));
+                }
             }
         }
         
@@ -308,7 +313,7 @@ public class CollectionWidget
 
     private int GetIconsPerRow()
     {
-        return (int)Math.Floor((UiHelper.GetLengthToRightOfWindow() + UiHelper.UnitWidth() * 3) / (iconSize + (UiHelper.UnitWidth() * 2)));
+        return (int)Math.Floor((UiHelper.GetLengthToRightOfWindow() - UiHelper.UnitWidth()) / (iconSize + (UiHelper.UnitWidth() * 2)));
     }
 
     public bool IsFiltered(ICollectible collectible)

@@ -20,7 +20,7 @@ public class SubmarineSource : CollectibleSource
         return sourceType;
     }
 
-    public static int defaultIconId = 65035; //60850
+    public static int defaultIconId = 61821; //60850
     protected override int GetIconId()
     {
         return defaultIconId;

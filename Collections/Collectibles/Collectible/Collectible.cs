@@ -21,6 +21,10 @@ public abstract class Collectible<T> : ICollectible where T : struct, IExcelRow<
     protected abstract uint GetId();
     protected abstract string GetName();
     protected abstract string GetDescription();
+    public virtual void DrawAdditionalTooltip()
+    {
+        return;
+    }
 
     public ICollectibleKey CollectibleKey { get; init; }
     public T ExcelRow { get; set; }

@@ -1,5 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.System.Input;
-
 namespace Collections;
 
 public class ContentFiltersWidget
@@ -13,23 +11,26 @@ public class ContentFiltersWidget
     private Dictionary<SourceCategory, ISharedImmediateTexture> icons = new();
     private Dictionary<SourceCategory, int> contentTypesToIconId = new()
     {
-        {SourceCategory.Gil, 65002},
+        {SourceCategory.Gil, 61758},
         {SourceCategory.Scrips, 65028},
-        {SourceCategory.MGP, 65025},
+        {SourceCategory.MGP, 61820},
         {SourceCategory.PvP, PvPSeriesSource.iconId}, // 61806
         {SourceCategory.Duty, InstanceSource.defaultIconId},
         {SourceCategory.Quest, QuestSource.iconId},
+        {SourceCategory.Fate, 61809},
         {SourceCategory.Event, EventSource.iconId},
         {SourceCategory.Tomestones, 65086},
         {SourceCategory.DeepDungeon, 61824},
         {SourceCategory.BeastTribes, 65016}, // 65042
         {SourceCategory.MogStation, MogStationSource.iconId},
         {SourceCategory.Achievement, AchievementSource.iconId},
-        {SourceCategory.CompanySeals, 65005},
-        {SourceCategory.IslandSanctuary, 65096},
-        {SourceCategory.HuntSeals, 65034},
-        {SourceCategory.TreasureHunts, 000115}, //61829
-        {SourceCategory.Crafting, 62202},
+        {SourceCategory.CompanySeals, 61812},
+        {SourceCategory.IslandSanctuary, 61847},
+        {SourceCategory.TheHunt, 61819},
+        {SourceCategory.TreasureHunts, 61808},
+        {SourceCategory.Crafting, 61816},
+        {SourceCategory.RestorationZone, 61815},
+        {SourceCategory.FieldOperations, 61837},
         {SourceCategory.Voyages, SubmarineSource.defaultIconId},
     };
 
@@ -47,7 +48,7 @@ public class ContentFiltersWidget
     public void Draw()
     {
         // Invisible button to set width for the table, otherwise it is cutoff by the width of it's cell (which is dictated by EquipSlotWidget above it)
-        ImGui.InvisibleButton("invisible", new Vector2(UiHelper.UnitWidth() * WidgetWidth, 0));
+        ImGui.InvisibleButton("invisible", new Vector2(UiHelper.UnitWidth() * WidgetWidth, 1));
 
         if (ImGui.BeginTable($"content-filters", columns, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY))
         {
@@ -141,7 +142,7 @@ public class ContentFiltersWidget
 
     private void LoadIcons()
     {
-        icons = contentTypesToIconId.AsParallel().ToDictionary(c => c.Key, c => IconHandler.getIcon(c.Value));
+        icons = contentTypesToIconId.AsParallel().ToDictionary(c => c.Key, c => IconHandler.GetIcon(c.Value));
     }
 
     private void InitializeDefaultFiltersState()

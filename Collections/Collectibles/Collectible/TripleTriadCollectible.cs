@@ -5,7 +5,7 @@ namespace Collections;
 
 public class TripleTriadCollectible : Collectible<TripleTriadCard>, ICreateable<TripleTriadCollectible, TripleTriadCard>
 {
-    public new static string CollectionName => "Triple Triad";
+    public static string CollectionName => "Triple Triad";
 
     public TripleTriadCollectible(TripleTriadCard excelRow) : base(excelRow)
     {
@@ -36,10 +36,11 @@ public class TripleTriadCollectible : Collectible<TripleTriadCard>, ICreateable<
         return ExcelRow.Description.ToString();
     }
     
-    // protected override HintModule GetSecondaryHint()
-    // {
-    //     return new HintModule($"Card No. {ExcelRow.Description.ToString().Split("Card No. ").Last()}", null);
-    // }
+    protected override HintModule GetSecondaryHint()
+    {
+        TripleTriadCardResident? temp = ExcelCache<TripleTriadCardResident>.GetSheet().GetRow(ExcelRow.RowId);
+        return new HintModule($"Card {(temp?.UIPriority > 0 ? "Ex" : "No")}. {temp?.Order ?? 0}", null);
+    }
 
     public override unsafe void UpdateObtainedState()
     {
@@ -53,7 +54,6 @@ public class TripleTriadCollectible : Collectible<TripleTriadCard>, ICreateable<
 
     public override unsafe void Interact()
     {
-        // Do nothing
     }
 
     public override void OpenGamerEscape()

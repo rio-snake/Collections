@@ -33,6 +33,12 @@ public struct EquipSlotCategoryAdapter(ExcelPage page, uint offset, uint row) : 
             return EquipSlot.Legs;
         if (Feet != 0)
             return EquipSlot.Feet;
+        if (Ears != 0) return EquipSlot.Ears;
+        if (Neck != 0) return EquipSlot.Neck;
+        if (Wrists != 0) return EquipSlot.Wrists;
+        if (FingerR != 0) return EquipSlot.FingerR;
+        if (FingerL != 0) return EquipSlot.FingerL;
+        
         return EquipSlot.None;
     }
 
@@ -60,8 +66,8 @@ public struct EquipSlotCategoryAdapter(ExcelPage page, uint offset, uint row) : 
     public readonly sbyte Ears => page.ReadInt8(offset + 8);
     public readonly sbyte Neck => page.ReadInt8(offset + 9);
     public readonly sbyte Wrists => page.ReadInt8(offset + 10);
-    public readonly sbyte FingerL => page.ReadInt8(offset + 11);
-    public readonly sbyte FingerR => page.ReadInt8(offset + 12);
+    public readonly sbyte FingerR => page.ReadInt8(offset + 11);
+    public readonly sbyte FingerL => page.ReadInt8(offset + 12);
     public readonly sbyte SoulCrystal => page.ReadInt8(offset + 13);
 
 }

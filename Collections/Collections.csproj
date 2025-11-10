@@ -40,6 +40,26 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>
+        <Content Include="Data\Resources\Ears.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Data\Resources\Neck.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Data\Resources\Wrists.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Data\Resources\FingerR.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Data\Resources\FingerL.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
         <Content Include="Data\Resources\ItemIdToDuty.csv">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
@@ -78,7 +98,7 @@
     <ItemGroup>
         <PackageReference Include="CSVFile" Version="3.2.0" />
         <PackageReference Include="CsvHelper" Version="30.0.1" />
-        <PackageReference Include="LuminaSupplemental.Excel" Version="3.0.4" />
+        <PackageReference Include="LuminaSupplemental.Excel" Version="3.0.5" />
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
         <Reference Include="FFXIVClientStructs">
             <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
@@ -92,10 +112,10 @@
             <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <Reference Include="ImGui.NET">
+        <!-- <Reference Include="ImGui.NET">
             <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
             <Private>false</Private>
-        </Reference>
+        </Reference> -->
         <Reference Include="ImGuiScene">
             <HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
             <Private>false</Private>

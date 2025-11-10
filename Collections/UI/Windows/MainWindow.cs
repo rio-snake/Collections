@@ -14,7 +14,7 @@ public class MainWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(500, 300),
+            MinimumSize = new Vector2(520, 300),
             MaximumSize = new Vector2(2000, 1000)
         };
 
@@ -76,6 +76,8 @@ public class MainWindow : Window, IDisposable
     {
         if (T == typeof(GlamourCollectible))
             return new GlamourTab();
+        else if (T == typeof(OutfitsCollectible))
+            return new OutfitsTab();
         else
             return new CollectionTab(Services.DataProvider.GetCollection(T));
 

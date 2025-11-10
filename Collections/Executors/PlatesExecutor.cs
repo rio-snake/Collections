@@ -4,6 +4,8 @@ namespace Collections;
 
 public unsafe class PlatesExecutor
 {
+    // mutex, don't make this readonly unless you switch this to a singleton class.
+    private static object mux = new();
     private static unsafe AgentMiragePrismMiragePlate* plateAgent => AgentMiragePrismMiragePlate.Instance();
 
     public static unsafe bool IsInPlateWindow()
@@ -12,40 +14,44 @@ public unsafe class PlatesExecutor
         return plateAgent->AgentInterface.IsAgentActive();
     }
 
-    public static unsafe void SetPlateItem(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0)
+    public static unsafe void SetPlateItem(ItemAdapter item, byte stain0Id = 0, byte stain1Id = 0, EquipSlot? equipSlot = null)
     {
         try
         {
-            if (!IsInPlateWindow())
-                throw new ApplicationException("Attempt to edit Glamour Plate when plate agent is inactive");
-
-            SetPlateAgentToEquipSlot(item.EquipSlot);
-
-            // Look up in Dresser
-            if (Services.ItemFinder.IsItemInDresser(item.RowId))
+            // prevents multithreaded for loops messing with the PlateAgent concurrently
+            lock(mux)
             {
-                Dev.Log($"Found {item.Name} ({item.RowId}) in Dresser, Adding to plate with stain: {stain0Id}, {stain1Id}");
-                var index = Services.DresserObserver.DresserItemIds.IndexOf(item.RowId);
-                SetPlateItem(PlateItemSource.Dresser, index, item.RowId, stain0Id, stain1Id);
-            }
+                if (!IsInPlateWindow())
+                    throw new ApplicationException("Attempt to edit Glamour Plate when plate agent is inactive");
 
-            // Look up in Armoire
-            else if (Services.ItemFinder.IsItemInArmoireCache(item.RowId))
-            {
-                Dev.Log($"Found {item.Name} ({item.RowId}) in Armoire, Adding to plate with stain: {stain0Id}, {stain1Id}");
+                SetPlateAgentToEquipSlot(equipSlot ?? item.EquipSlot);
 
-                // Checking Armoire Loaded since it's not always loaded when in plates window
-                if (!Services.DresserObserver.IsArmoireLoaded())
+                // Look up in Dresser
+                if (Services.ItemFinder.IsItemInDresser(item.RowId, checkOutfits: true))
                 {
-                    Dev.Log($"Armoire not loaded, not applying {item.Name} ({item.RowId}) to plate");
+                    Dev.Log($"Found {item.Name} ({item.RowId}) in Dresser, Adding to plate with stain: {stain0Id}, {stain1Id}");
+                    var index = Services.DresserObserver.DresserItemIds.IndexOf(item.RowId);
+                    SetPlateItem(PlateItemSource.Dresser, index, item.RowId, stain0Id, stain1Id);
                 }
-                var cabinetId = (int)Services.ItemFinder.CabinetIdFromItemId(item.RowId);
-                SetPlateItem(PlateItemSource.Armoire, cabinetId, item.RowId, stain0Id, stain1Id);
-            }
 
-            else
-            {
-                Dev.Log($"Couldn't find {item.Name} in Dresser or Armoire");
+                // Look up in Armoire
+                else if (Services.ItemFinder.IsItemInArmoireCache(item.RowId))
+                {
+                    Dev.Log($"Found {item.Name} ({item.RowId}) in Armoire, Adding to plate with stain: {stain0Id}, {stain1Id}");
+
+                    // Checking Armoire Loaded since it's not always loaded when in plates window
+                    if (!Services.DresserObserver.IsArmoireLoaded())
+                    {
+                        Dev.Log($"Armoire not loaded, not applying {item.Name} ({item.RowId}) to plate");
+                    }
+                    var cabinetId = (int)Services.ItemFinder.CabinetIdFromItemId(item.RowId);
+                    SetPlateItem(PlateItemSource.Armoire, cabinetId, item.RowId, stain0Id, stain1Id);
+                }
+
+                else
+                {
+                    Dev.Log($"Couldn't find {item.Name} in Dresser or Armoire");
+                }
             }
         }
         catch (Exception e)

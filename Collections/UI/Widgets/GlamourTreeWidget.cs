@@ -184,22 +184,19 @@ public class GlamourTreeWidget
                         {
                             DeleteGlamourSet(n, k);
                         }
+
+                        ImGui.Button($"Clone##{n}{k}");
+                        UiHelper.InputText($"Clone##{n}{k}", (name) => CloneGlamourSet(n, k, name));
+
                         ImGui.EndPopup();
                     }
 
                     // Glamour Set - drop source
-                    if (ImGui.BeginDragDropSource())
+                    if (ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceAllowNullId | ImGuiDragDropFlags.SourceNoDisableHover))
                     {
-                        // // Not used really
-                        // unsafe
-                        // {
-                        //     var i = 0;
-                        //     int* tesnum = &i;
-                        //     ImGui.SetDragDropPayload($"payload{i}", new IntPtr(tesnum), sizeof(int));
-                        // }
-
                         // Capture drag source state
                         dropSource = (n, k);
+                        ImGui.SetDragDropPayload("DragDropData", []);
                         ImGui.EndDragDropSource();
                     }
 
@@ -227,6 +224,18 @@ public class GlamourTreeWidget
     private void AddGlamourSet(string setName)
     {
         glamourTree.Directories.First().GlamourSets.Add(new GlamourSet(setName));
+    }
+
+    private void CloneGlamourSet(int directoryIndex, int glamourSetIndex, string name)
+    {
+        GlamourSet toClone = glamourTree.Directories[directoryIndex].GlamourSets[glamourSetIndex];
+        GlamourSet clonedSet = new GlamourSet(name);
+        // clone the underlying glamour items as well, otherwise they're just references
+        clonedSet.Items = toClone.Items.Select((item) => (item.Key, new GlamourItem(item.Value.ItemId, item.Value.Stain0Id, item.Value.Stain1Id))).ToDictionary();
+        glamourTree.Directories[directoryIndex].GlamourSets.Insert(glamourSetIndex + 1, clonedSet);
+
+        // intuitive behavior is to switch to cloned set
+        SetSelectedGlamourSet(directoryIndex, glamourSetIndex + 1, true);
     }
 
     private void AddDirectory(string directoryName)
@@ -299,27 +308,24 @@ public class GlamourTreeWidget
     // Move selected glamour set under this target index
     private void MoveGlamourSet(int targetDirectory, int targetGlamourSet)
     {
-        // Determine offset if moving in the same directory
+        // we add 1 to moves on list items to keep movement from different folders
+        // "natural" feeling, but moving within the same folder feels natural when
+        // this offset doesn't exist
         var targetOffset = 0;
-        if (targetDirectory == dropSource.directory)
+        if (targetDirectory == dropSource.directory && targetGlamourSet > 0)
         {
-            if (targetGlamourSet > dropSource.glamourSet)
-            {
-                targetOffset = -1;
-            }
+            targetOffset = -1;
         }
+
+        Dev.Log($"Moving Set {dropSource.glamourSet} in directory {dropSource.directory} to Set {targetGlamourSet + targetOffset} in directory {targetDirectory}");
 
         // Update directory tree
         var sourceGlamourSet = glamourTree.Directories[dropSource.directory].GlamourSets[dropSource.glamourSet];
         glamourTree.Directories[dropSource.directory].GlamourSets.RemoveAt(dropSource.glamourSet);
         glamourTree.Directories[targetDirectory].GlamourSets.Insert(targetGlamourSet + targetOffset, sourceGlamourSet);
 
-        // Update selected glamour set if moved
-        var selectedMove = dropSource == selected;
-        if (selectedMove)
-        {
-            SetSelectedGlamourSet(targetDirectory, targetGlamourSet + targetOffset, true);
-        }
+        // Update selected glamour set
+        SetSelectedGlamourSet(targetDirectory, targetGlamourSet + targetOffset, true);
     }
 
     private void ApplyGlamourSetToPlate()
@@ -328,7 +334,7 @@ public class GlamourTreeWidget
         // TODO add indication on which items exist in Dresser
         foreach (var (equipSlot, glamourItem) in currentGlamourSet.Items)
         {
-            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id);
+            PlatesExecutor.SetPlateItem(glamourItem.GetCollectible().ExcelRow, (byte)glamourItem.Stain0Id, (byte)glamourItem.Stain1Id, equipSlot);
         }
     }
 
@@ -365,7 +371,8 @@ public class GlamourTreeWidget
                 if(item is null) return;
                 if (Services.DataProvider.SupportedEquipSlots.Contains(item.Value.EquipSlot))
                 {
-                    currentGlamourSet.SetItem(item.Value, stain0Id, stain1Id);
+                    // left hand finger needs to be manually accounted for
+                    currentGlamourSet.SetItem(item.Value, stain0Id, stain1Id, i == EquipSlotConverter.EquipSlotToInventorySlot(EquipSlot.FingerL) ? EquipSlot.FingerL : null);
                 }
             }
         }
