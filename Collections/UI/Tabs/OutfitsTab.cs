@@ -26,14 +26,14 @@ public class OutfitsTab : IDrawable
 
         EventService.Subscribe<FilterChangeEvent, FilterChangeEventArgs>(OnPublish);
         EventService.Subscribe<OutfitItemChangeEvent, OutfitItemChangeEventArgs>(OnPublish);
-        EventService.Subscribe<ReapplyPreviewEvent, ReapplyPreviewEventArgs>(OnPublish); 
+        EventService.Subscribe<ReapplyPreviewEvent, ReapplyPreviewEventArgs>(OnPublish);
     }
 
     private const int SpaceBetweenFilterWidgets = 3;
 
     public void Draw()
     {
-        Dev.Start();
+        // Dev.Start();
 
         // if (ImGui.BeginTable("glam-tree", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
         // {
@@ -160,13 +160,13 @@ public class OutfitsTab : IDrawable
                     return true;
                 var itemJobCat = ((OutfitKey)c.CollectibleKey).FirstItem.ClassJobCategory.Value;
                 // only show "All Classes" items if toggled
-                if (itemJobCat.RowId < 2 ) return JobSelectorWidget.AllClasses();
+                if (itemJobCat.RowId < 2) return JobSelectorWidget.AllClasses();
                 var itemJobs = itemJobCat.GetJobs();
                 foreach (var jobFilter in jobFilters)
                 {
-                    if(itemJobs.Contains(jobFilter))
+                    if (itemJobs.Contains(jobFilter))
                     {
-                            return true;
+                        return true;
                     }
                 }
                 return false;
