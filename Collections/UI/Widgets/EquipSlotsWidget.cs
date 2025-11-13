@@ -95,21 +95,33 @@ public class EquipSlotsWidget
             {
                 SetEquipSlot(equipSlot);
             }
-
+            bool showTooltip = false;
             // Interaction with buttons (details / reset), Item must be set in this slot
             if (ImGui.IsItemHovered() && collectible is not null && !hoveredPaletteButton[equipSlot]) // hoveredPaletteButton is here to take presedence of it over this
             {
                 // Details on hover
                 ImGui.BeginTooltip();
+                ImGui.Text("Right Click to interact...");
                 CollectibleTooltipWidget.DrawItemTooltip(collectible);
                 ImGui.EndTooltip();
 
-                // Reset on right click
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                // // Reset on right click
+                // if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                // {
+                //     showTooltip = true; 
+                //     // currentGlamourSet.ClearEquipSlot(equipSlot);
+                //     // Services.PreviewExecutor.ResetSlotPreview(equipSlot);
+                // }
+            }
+            if (collectible is not null && !hoveredPaletteButton[equipSlot] && ImGui.BeginPopupContextItem($"click-glam-item##{collectible.GetHashCode()}", ImGuiPopupFlags.MouseButtonRight))
+            {
+                if(ImGui.Button("Remove from Slot"))
                 {
                     currentGlamourSet.ClearEquipSlot(equipSlot);
                     Services.PreviewExecutor.ResetSlotPreview(equipSlot);
                 }
+                CollectibleTooltipWidget.DrawItemTooltip(collectible);
+                ImGui.EndPopup();
             }
 
             // Set cursor on bottom right to draw Palette Widget button
@@ -226,6 +238,7 @@ public class EquipSlotsWidget
 
     public void OnPublish(GlamourItemChangeEventArgs args)
     {
+        if (Services.Configuration.SeparatePreviewAndApply && !args.ApplyToSlot) return;
         // Update current glamour set
         var item = args.Collectible.ExcelRow;
         currentGlamourSet.SetItem(item, paletteWidgets[item.EquipSlot].ActiveStainPrimary.RowId, paletteWidgets[item.EquipSlot].ActiveStainSecondary.RowId, equipSlot: activeEquipSlot);

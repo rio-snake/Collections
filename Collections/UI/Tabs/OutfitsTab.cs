@@ -20,7 +20,7 @@ public class OutfitsTab : IDrawable
         EquipSlotsWidget.currentGlamourSet = new GlamourSet("outfits preview");
         filteredCollection = GetInitialCollection();
         collectionSize = filteredCollection.Count();
-        CollectionWidget = new CollectionWidget(EventService, true, filteredCollection.Count > 0 ? filteredCollection.First().GetSortOptions() : null);
+        CollectionWidget = new CollectionWidget(EventService, true, filteredCollection.FirstOrDefault()?.GetSortOptions(), filteredCollection.FirstOrDefault()?.GetFilterOptions());
 
         ApplyFilters();
 

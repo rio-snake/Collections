@@ -47,16 +47,21 @@ public abstract class Collectible<T> : ICollectible where T : struct, IExcelRow<
             Reverse: true
         )
     ];
-    protected List<CollectibleFilterOption> FilterOptions = [
+    public static List<CollectibleFilterOption> FilterOptions = [
+        new CollectibleFilterOption(
+            "Exclude Events",
+            c => c.CollectibleKey.SourceCategories.Contains(SourceCategory.Event),
+            Description: "Exclude items only obtainable from seasonal or limited events"
+        ),
+        new CollectibleFilterOption(
+            "Exclude Mog Station",
+            c => c.CollectibleKey.SourceCategories.Contains(SourceCategory.MogStation) && c.CollectibleKey.SourceCategories.Count == 1,
+            Description: "Exclude items only ever obtainable via cash shop"
+        ),
         new CollectibleFilterOption(
             "Exclude Unknown",
             c => c.CollectibleKey.SourceCategories.Count == 0,
             Description: "Exclude items that this plugin cannot find a source for"
-        ),
-        new CollectibleFilterOption(
-            "Exclude Time-Limited",
-            c => c.CollectibleKey.SourceCategories.Contains(SourceCategory.Event),
-            Description: "Exclude items only obtainable from seasonal or limited events"
         ),
     ];
 

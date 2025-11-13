@@ -17,6 +17,8 @@ public class Configuration : IPluginConfiguration
     public bool AutoHideObtainedFromInstanceTab = false;
     public List<string> ExcludedCollectionsFromInstanceTab = new();
     public bool ForceTryOn = false;
+    // Changes left-click behaviour for glamour collections
+    public bool SeparatePreviewAndApply = false;
 
     public void Save()
     {

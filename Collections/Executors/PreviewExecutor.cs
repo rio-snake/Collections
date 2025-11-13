@@ -1,6 +1,7 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using Lumina.Extensions;
 
 namespace Collections;
 
@@ -12,6 +13,12 @@ public unsafe class PreviewExecutor
     public static bool IsInGPose()
     {
         return GameMain.IsInGPose();
+    }
+    
+    // Glasses?
+    public void TryOnGlasses(uint glassesId)
+    {
+        Character->DrawData.SetGlasses(0, (ushort)glassesId);
     }
 
     public void PreviewWithTryOnRestrictions(GlamourCollectible collectible, uint stain0Id, uint stain1Id, bool tryOn, EquipSlot? equipSlot = null)
@@ -31,10 +38,10 @@ public unsafe class PreviewExecutor
     // more expensive than through using the collectible.
     public void PreviewWithTryOnRestrictions(EquipSlot equipSlot, uint stain0Id, uint stain1Id, bool tryOn)
     {
-
-        var itemSheet = ExcelCache<ItemAdapter>.GetSheet()!;
-        var invSlot = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, EquipSlotConverter.EquipSlotToInventorySlot(equipSlot));
-        var item = itemSheet.GetRow(invSlot->GlamourId != 0 ? invSlot->GlamourId : invSlot->ItemId);
+        // var invSlot = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, EquipSlotConverter.EquipSlotToInventorySlot(equipSlot));
+        // var item = ExcelCache<ItemAdapter>.GetSheet().GetRow(invSlot->GlamourId != 0 ? invSlot->GlamourId : invSlot->ItemId);
+        var equippedPreview = Character->DrawData.Equipment(EquipSlotConverter.EquipSlotToEquipmentSlot(equipSlot));
+        var item = ExcelCache<ItemAdapter>.GetSheet().FirstOrNull(item => (ushort)item.ModelMain == equippedPreview.Id && ((byte)(item.ModelMain >> 16)) == equippedPreview.Variant);
         // if(stain0Id < 0) stain0Id = invSlot->Stains[0];
         // if(stain1Id < 0) stain0Id = invSlot->Stains[1];
         var tryOnOverride = tryOn; // no need to worry about already equipped mog items

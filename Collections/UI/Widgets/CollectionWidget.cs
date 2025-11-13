@@ -7,10 +7,11 @@ public class CollectionWidget
     private string searchFilter = ""; 
     public CollectibleSortOption PageSortOption { get; set; }
     private List<CollectibleSortOption> cachedOptions = [];
+    private List<CollectibleFilterOption> cachedFilters = [];
     private bool isGlam { get; init; } = false;
     private EventService EventService { get; init; }
     private TooltipWidget CollectibleTooltipWidget { get; init; }
-    public CollectionWidget(EventService eventService, bool isGlam, List<CollectibleSortOption>? collectibleSortOptions = null)
+    public CollectionWidget(EventService eventService, bool isGlam, List<CollectibleSortOption>? collectibleSortOptions = null, List<CollectibleFilterOption>? filterOptions = null)
     {
         EventService = eventService;
         this.isGlam = isGlam;
@@ -20,6 +21,10 @@ public class CollectionWidget
         {
             PageSortOption = collectibleSortOptions.First();
             cachedOptions = collectibleSortOptions;
+        }
+        if(filterOptions != null && filterOptions.Count > 1)
+        {
+            cachedFilters = filterOptions;
         }
     }
 
@@ -137,6 +142,8 @@ public class CollectionWidget
         ImGui.SameLine(ImGui.GetColumnWidth() - pageSortWidgetWidth + 4, 0);
         DrawSortOptions();
 
+        
+
         ImGui.Text("Show:");
         ImGui.SameLine();
 
@@ -159,6 +166,8 @@ public class CollectionWidget
         {
             EventService.Publish<FilterChangeEvent, FilterChangeEventArgs>(new FilterChangeEventArgs(itemStatusFilter: CollectibleStatusFilter.Favorite));
         }
+        // Advanced Filters
+        DrawAdvancedFilters();
 
         if (isGlam)
         {
@@ -200,7 +209,7 @@ public class CollectionWidget
     {
         if (cachedOptions.Count == 0) return;
         ImGui.SetNextItemWidth(pageSortWidgetWidth);
-        
+
         if (ImGui.BeginCombo($"##sortCollectionDropdown", "Sort By", ImGuiComboFlags.HeightRegular))
         {
             foreach (var sortOpt in cachedOptions)
@@ -229,6 +238,21 @@ public class CollectionWidget
             }
             ImGui.EndCombo();
         }
+    }
+
+    private unsafe void DrawAdvancedFilters()
+    {
+        // ImGui.SameLine();
+        // if (ImGui.Button("More Filters"))
+        //     ImGui.OpenPopup("##advancedFilters", ImGuiPopupFlags.NoOpenOverItems);
+        // if(ImGui.BeginPopupModal("##advancedFilters"))
+        // {
+        //     foreach(var filter in cachedFilters)
+        //     {
+        //         filter.Draw(service: EventService);
+        //     }
+        //     ImGui.EndPopup(); 
+        // }
     }
 
     private int drawItemCount = 0;
@@ -268,6 +292,11 @@ public class CollectionWidget
         // Details on click
         if (ImGui.BeginPopupContextItem($"click-glam-item##{collectible.GetHashCode()}", ImGuiPopupFlags.MouseButtonRight))
         {
+            if(ImGui.Button("Apply to Glamour Slot"))
+            {
+                Dev.Log("Publishing GlamourItemChangeEvent");
+                EventService.Publish<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(new GlamourItemChangeEventArgs((GlamourCollectible)collectible, true));
+            }
             CollectibleTooltipWidget.DrawItemTooltip(collectible);
             ImGui.EndPopup();
         }
@@ -331,7 +360,15 @@ public class CollectionWidget
             return true;
         if (obtainedState == 3 && !collectible.IsFavorite())
             return true;
-
+        
+        // supplied filters
+        foreach(var filter in cachedFilters)
+        {
+            if(filter.IsFiltered(collectible))
+            {
+                return true;
+            }
+        }
         // Default
         return false;
     }

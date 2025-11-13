@@ -258,8 +258,9 @@ public class TooltipWidget
             DrawHintModule(collectible.SecondaryHint);
 
         // helpful for development
-        if(Services.PluginInterface.IsDev)
-            DrawHintModule(new HintModule($"Collection ID: {collectible.Id}     Item ID: {collectible.CollectibleKey?.Id}", null));
+#if DEBUG
+        DrawHintModule(new HintModule($"Collection ID: {collectible.Id}     Item ID: {collectible.CollectibleKey?.Id}", null));
+#endif
     }
 
     public void DrawHintModule(HintModule hintmodule)

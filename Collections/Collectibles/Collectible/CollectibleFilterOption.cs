@@ -17,10 +17,10 @@ public class CollectibleFilterOption
         this.Description = Description;
         this.Filter = Filter;
     }
-    public string Name {get; set;}
-    public bool Enabled {get; set;}
-    public string Description{get; set;}
-    public Func<ICollectible, bool> Filter {get; set;}
+    public string Name { get; set; }
+    public bool Enabled { get; set; }
+    public string Description { get; set; }
+    public Func<ICollectible, bool> Filter { get; set; }
 
     public bool IsFiltered(ICollectible collectible)
     {
@@ -30,5 +30,16 @@ public class CollectibleFilterOption
     public IEnumerable<ICollectible> FilterCollection(IEnumerable<ICollectible> collection)
     {
         return collection.AsParallel().Where(c => !Filter(c));
+    }
+
+    // Try to assume everything is on the same line
+    public unsafe void Draw(EventService service)
+    {
+        bool ready = Enabled;
+        if (ImGui.Checkbox(Name, ref ready))
+        {
+            Enabled = ready;
+            service.Publish<FilterChangeEvent, FilterChangeEventArgs>(new FilterChangeEventArgs());
+        }
     }
 }

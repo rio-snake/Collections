@@ -14,12 +14,18 @@ public class SettingsTab : IDrawable
     }
 
     private bool autoOpenInstanceTab;
+    private bool separatePreviewAndApply;
     private bool onlyOpenIfUncollected;
     private bool autoHideObtainedFromInstanceTab;
     private bool showAdditionalTooltips;
     private List<string> excludedCollectionsFromInstanceTab;
     public void Draw()
     {
+        if(ImGui.Checkbox("Separate Preview and Add to Equip Slot", ref separatePreviewAndApply))
+        {
+            Services.Configuration.SeparatePreviewAndApply = separatePreviewAndApply;
+            Services.Configuration.Save();
+        }
         if(ImGui.Checkbox("Show additional item information in tooltips", ref showAdditionalTooltips))
         {
             Services.Configuration.ShowAdditionalTooltips = showAdditionalTooltips;
@@ -30,7 +36,7 @@ public class SettingsTab : IDrawable
             Services.Configuration.AutoOpenInstanceTab = autoOpenInstanceTab;
             Services.Configuration.Save();
         }
-        // spacing to signify this is a sub-option for auto-open
+        // padding to signify this is a sub-option for auto-open
         ImGui.InvisibleButton("padding", new Vector2(15, 1));
         ImGui.SameLine();
         if (ImGui.Checkbox("Only open Instance tab if there are uncollected items ", ref onlyOpenIfUncollected))

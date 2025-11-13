@@ -21,6 +21,12 @@ public class FramerKitCollectible : Collectible<BannerCondition>, ICreateable<Fr
     private uint PlateOverlay = 0;
     private uint PlateAccent = 0;
 
+    // Some notes:
+    // BannerCondition UnlockType2 links to GameRewardObtainType rowId.
+    // In GameRewardObtainType, Unknown0 is the IconId, Unknown1 is the Addon row ID
+    // Addon row ID references the fields after UnlockType2 to populate it's strings.
+    // This can be used to auto-populate minion, framer kit, and emote unlock data
+
     public FramerKitCollectible(BannerCondition excelRow) : base(excelRow)
     {
         // Yes, this is still as performant as storing the RowRefs.

@@ -50,6 +50,22 @@ public class GlamourCollectible : Collectible<ItemAdapter>, ICreateable<GlamourC
                     || Services.ItemFinder.IsItemInDresser(ExcelRow.RowId, true);
     }
 
+    public override unsafe void DrawAdditionalTooltip()
+    {
+        base.DrawAdditionalTooltip();
+        List<ItemAdapter> sharedModels = ExcelCache<ItemAdapter>.GetSheet().Where(c => c.ModelMain == ExcelRow.ModelMain && c.EquipSlot == ExcelRow.EquipSlot && c.RowId != ExcelRow.RowId).ToList();
+        if(sharedModels.Count > 0)
+        {
+            ImGui.Text("Shares Model with: ");
+            foreach(ItemAdapter sharedModel in sharedModels)
+            {
+                ImGui.Image(IconHandler.getIcon(sharedModel.Icon).GetWrapOrEmpty().Handle, new Vector2(40, 40));
+                ImGui.SameLine();
+                ImGui.Text($"{sharedModel.Name} ({sharedModel.DyeCount} dye slots)");
+            }
+        }
+    }    
+
     protected override int GetIconId()
     {
         return ExcelRow.Icon;

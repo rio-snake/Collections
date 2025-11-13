@@ -23,7 +23,7 @@ public class ContentFiltersWidget
         {SourceCategory.Event, EventSource.iconId},
         {SourceCategory.Tomestones, 65086},
         {SourceCategory.DeepDungeon, 61824},
-        {SourceCategory.BeastTribes, 65016}, // 65042
+        {SourceCategory.BeastTribes, 61814}, 
         {SourceCategory.MogStation, MogStationSource.iconId},
         {SourceCategory.Achievement, AchievementSource.iconId},
         {SourceCategory.CompanySeals, 61812},
