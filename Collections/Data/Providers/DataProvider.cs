@@ -4,7 +4,7 @@ namespace Collections;
 
 public class DataProvider
 {
-    public List<ClassJobAdapter> SupportedClassJobs = new();
+    public List<ClassJob> SupportedClassJobs = new();
     public List<StainAdapter> SupportedStains { get; set; }
     public readonly List<EquipSlot> SupportedEquipSlots = new()
     {
@@ -50,7 +50,9 @@ public class DataProvider
     private void PopulateData()
     {
         // Class jobs
-        SupportedClassJobs = ExcelCache<ClassJobAdapter>.GetSheet().AsParallel().Where(entry => ClassJobAdapter.ClassJobConfig.ContainsKey(entry.RowId)).ToList();
+        SupportedClassJobs = ExcelCache<ClassJob>.GetSheet().AsParallel()
+        // Filters out base ARR jobs + junk rows
+        .Where(entry => entry.ClassJobCategory.RowId > 0 && (entry.DohDolJobIndex >= 0 || entry.JobIndex > 0)).ToList();
 
         // Stains
         SupportedStains = ExcelCache<StainAdapter>.GetSheet().Where(s => s.Name != "").ToList();

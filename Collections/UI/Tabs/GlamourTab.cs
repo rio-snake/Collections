@@ -1,4 +1,3 @@
-
 namespace Collections;
 
 public class GlamourTab : IDrawable
@@ -25,7 +24,7 @@ public class GlamourTab : IDrawable
         EventService.Subscribe<FilterChangeEvent, FilterChangeEventArgs>(OnPublish);
         EventService.Subscribe<GlamourItemChangeEvent, GlamourItemChangeEventArgs>(OnPublish);
         EventService.Subscribe<GlamourSetChangeEvent, GlamourSetChangeEventArgs>(OnPublish);
-        EventService.Subscribe<ReapplyPreviewEvent, ReapplyPreviewEventArgs>(OnPublish); 
+        EventService.Subscribe<ReapplyPreviewEvent, ReapplyPreviewEventArgs>(OnPublish);
 
         // GlamourTreeWidget will always have at least one Directory + Set.
         // Therefore once everything is initialized, set selection to first set (0, 0)
@@ -37,7 +36,7 @@ public class GlamourTab : IDrawable
 
     public void Draw()
     {
-        Dev.Start();
+        // Dev.Start();
 
         if (ImGui.BeginTable("glam-tree", 1, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX | ImGuiTableFlags.SizingFixedFit))
         {
@@ -159,18 +158,18 @@ public class GlamourTab : IDrawable
         // (3) job filters
         .Where(c =>
             {
-                if (!jobFilters.Any())
+                // show all items if all filters disabled
+                if (!jobFilters.Any() && !JobSelectorWidget.AllClasses())
                     return true;
-                var itemJobs = ((GlamourCollectible)c).ExcelRow.Jobs;
+                var itemJobCat = ((GlamourCollectible)c).ExcelRow.ClassJobCategory.Value;
+                // only show "All Classes" items if toggled
+                if (itemJobCat.RowId < 2) return JobSelectorWidget.AllClasses();
+                var itemJobs = itemJobCat.GetJobs();
                 foreach (var jobFilter in jobFilters)
                 {
-                    var jobFilterAbbreviation = jobFilter.Job;
-                    foreach (var itemClassJobAbbreviation in itemJobs)
+                    if (itemJobs.Contains(jobFilter))
                     {
-                        if (itemClassJobAbbreviation == jobFilterAbbreviation)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
                 return false;
