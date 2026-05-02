@@ -1,3 +1,5 @@
+using Dalamud.Game.DutyState;
+
 namespace Collections;
 
 public class InstanceTab : IDrawable
@@ -17,7 +19,7 @@ public class InstanceTab : IDrawable
         Services.DutyState.DutyStarted += OnDutyStarted;
     }
 
-    public void OnDutyStarted(object sender, ushort arg)
+    public void OnDutyStarted(IDutyStateEventArgs args)
     {
         Dev.Log("Received DutyStarted event");
         hideObtainedCollectibles = Services.Configuration.AutoHideObtainedFromInstanceTab;
